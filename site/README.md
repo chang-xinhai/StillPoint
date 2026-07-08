@@ -1,6 +1,6 @@
-# StillPoint landing page sidecar
+# StillPoint GitHub Pages site
 
-Static landing page draft for StillPoint. It is intentionally limited to this `site/` directory and uses only `index.html` plus `styles.css`.
+Static GitHub Pages site for StillPoint. It is intentionally limited to this `site/` directory and uses only `index.html`, `styles.css`, and the copied app icon asset.
 
 Open locally:
 
@@ -8,4 +8,10 @@ Open locally:
 open site/index.html
 ```
 
-The page uses system fonts, semantic HTML, CSS-only macOS menu bar/popover mockups, and `prefers-color-scheme` for light/dark adaptation.
+Or serve it with a local HTTP server:
+
+```bash
+python3 -m http.server 4173 --directory site
+```
+
+Publishing is handled by `.github/workflows/pages.yml`, which uploads this directory to GitHub Pages on pushes to `main`.
