@@ -5,7 +5,7 @@
 **macOS Menu Bar Attention Guardian**
 
 [Website](https://chang-xinhai.github.io/StillPoint/) ·
-[Download](https://github.com/chang-xinhai/StillPoint/releases/tag/v0.2.1) ·
+[Download](https://github.com/chang-xinhai/StillPoint/releases/tag/v0.2.2) ·
 [Product Spec](./docs/product-spec.md) ·
 [Release Notes](./docs/releasing.md)
 
@@ -47,12 +47,12 @@ Protect the pause before the feed.
 
 The latest demo build is available from GitHub Releases:
 
-[Download StillPoint 0.2.1](https://github.com/chang-xinhai/StillPoint/releases/tag/v0.2.1)
+[Download StillPoint 0.2.2](https://github.com/chang-xinhai/StillPoint/releases/tag/v0.2.2)
 
 Artifacts:
 
-- `StillPoint-macos-arm64-0.2.1.dmg`
-- `StillPoint-macos-arm64-0.2.1.zip`
+- `StillPoint-macos-arm64-0.2.2.dmg`
+- `StillPoint-macos-arm64-0.2.2.zip`
 - SHA256 checksum files for both artifacts
 
 The current release is ad-hoc signed for local validation, but not notarized by
