@@ -1,0 +1,44 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "name": "Debug StillPoint",
+            "target": "StillPoint",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug StillPoint"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "name": "Release StillPoint",
+            "target": "StillPoint",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release StillPoint"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "name": "Debug StillPointLogicTests",
+            "target": "StillPointLogicTests",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug StillPointLogicTests"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "name": "Release StillPointLogicTests",
+            "target": "StillPointLogicTests",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release StillPointLogicTests"
+        }
+    ]
+}

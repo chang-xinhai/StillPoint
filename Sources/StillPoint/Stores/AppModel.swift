@@ -288,7 +288,8 @@ final class AppModel: ObservableObject {
             isFocusLock: focusLockActive,
             triggerReason: focusLockActive
                 ? t("Deep Work Lock is active.", "专注锁正在生效。")
-                : t("App gate reached.", "应用阈值已到。")
+                : t("App gate reached.", "应用阈值已到。"),
+            language: language
         )
         presentIntervention(context: context, offendingApp: nil)
     }
@@ -372,7 +373,8 @@ final class AppModel: ObservableObject {
             isFocusLock: focusLockActive,
             triggerReason: focusLockActive
                 ? t("Deep Work Lock is active.", "专注锁正在生效。")
-                : t("App gate reached.", "应用阈值已到。")
+                : t("App gate reached.", "应用阈值已到。"),
+            language: language
         )
         presentIntervention(context: context, offendingApp: app)
     }

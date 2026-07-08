@@ -13,7 +13,9 @@ struct InterventionOverlayView: View {
                 VStack(spacing: 22) {
                     HStack {
                         StatusPill(
-                            text: context.isFocusLock ? "Deep Work Lock" : "Grace window ended",
+                            text: context.isFocusLock
+                                ? context.language.text("Deep Work Lock", "专注锁")
+                                : context.language.text("App gate reached", "应用阈值已到"),
                             systemImage: context.isFocusLock ? "lock.shield" : "pause.circle",
                             tint: context.isFocusLock ? .orange : .blue
                         )
@@ -26,10 +28,13 @@ struct InterventionOverlayView: View {
                     VStack(spacing: 9) {
                         Text("StillPoint")
                             .font(.system(size: 38, weight: .semibold))
-                        Text("Are you still here for the reason you came?")
+                        Text(context.language.text("Are you still here for the reason you came?", "你还在为刚才进来的理由而停留吗？"))
                             .font(.title2.weight(.semibold))
                             .multilineTextAlignment(.center)
-                        Text("\(context.appName) has held focus long enough to check intent.")
+                        Text(context.language.text(
+                            "\(context.appName) has held focus long enough to check intent.",
+                            "\(context.appName) 已经停留到需要确认意图的时间。"
+                        ))
                             .font(.callout)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -41,8 +46,8 @@ struct InterventionOverlayView: View {
                     VStack(spacing: 10) {
                         HStack(spacing: 10) {
                             OverlayChoiceButton(
-                                title: "Looking something up",
-                                detail: "Purpose pass",
+                                title: context.language.text("Looking something up", "我在查东西"),
+                                detail: context.language.text("Purpose pass", "查找通行"),
                                 systemImage: "magnifyingglass",
                                 tint: .blue
                             ) {
@@ -50,8 +55,8 @@ struct InterventionOverlayView: View {
                             }
 
                             OverlayChoiceButton(
-                                title: "Intentional break",
-                                detail: "Bounded pause",
+                                title: context.language.text("Intentional break", "有意休息"),
+                                detail: context.language.text("Bounded pause", "有边界的暂停"),
                                 systemImage: "cup.and.saucer",
                                 tint: .purple
                             ) {
@@ -61,8 +66,8 @@ struct InterventionOverlayView: View {
 
                         HStack(spacing: 10) {
                             OverlayChoiceButton(
-                                title: "I drifted",
-                                detail: "Close the feed",
+                                title: context.language.text("I drifted", "我走神了"),
+                                detail: context.language.text("Close the feed", "关闭信息流"),
                                 systemImage: "xmark.circle",
                                 tint: .red
                             ) {
@@ -70,8 +75,8 @@ struct InterventionOverlayView: View {
                             }
 
                             OverlayChoiceButton(
-                                title: "Lock this",
-                                detail: "Protect focus",
+                                title: context.language.text("Lock this", "锁住这次"),
+                                detail: context.language.text("Protect focus", "保护专注"),
                                 systemImage: "lock.shield",
                                 tint: .orange
                             ) {
@@ -128,4 +133,3 @@ private struct OverlayChoiceButton: View {
         .buttonStyle(.plain)
     }
 }
-

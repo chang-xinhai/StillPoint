@@ -25,6 +25,7 @@ struct InterventionContext: Identifiable, Equatable {
     var elapsedSeconds: TimeInterval
     var isFocusLock: Bool
     var triggerReason: String
+    var language: AppLanguage = .english
 }
 
 enum InterventionAction: String, Codable {

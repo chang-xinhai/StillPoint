@@ -70,6 +70,19 @@ struct StillPointLogicTests {
             customApp.matches(appName: "Anything", bundleIdentifier: "com.ss.iphone.ugc.Aweme"),
             "custom app matches generated bundle id term"
         )
+        expect(
+            customApp.gateSeconds == WatchedApp.defaultGateSeconds,
+            "custom app uses the default two-minute gate"
+        )
+
+        let customGateApp = WatchedApp(
+            displayName: "Rednote",
+            detail: "Lifestyle feed",
+            matchTerms: ["rednote"],
+            isEnabled: true,
+            gateSeconds: 5 * 60
+        )
+        expect(customGateApp.gateSeconds == 5 * 60, "watched app can store a custom gate")
 
         guard failures == 0 else {
             print("\(failures) StillPoint logic test(s) failed.")
