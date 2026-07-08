@@ -56,6 +56,31 @@ final class AppModel: ObservableObject {
         }
     }
 
+    var todayEvents: [AttentionEvent] {
+        attentionEvents.filter { Calendar.current.isDateInToday($0.date) }
+    }
+
+    var visibleTriggerThreshold: TimeInterval {
+        triggerThreshold()
+    }
+
+    var activeProgress: Double {
+        guard visibleTriggerThreshold > 0 else { return 0 }
+        return min(activeElapsed / visibleTriggerThreshold, 1)
+    }
+
+    var modeLabel: String {
+        if focusLockActive {
+            return "Deep Work"
+        }
+
+        return demoMode ? "Demo" : "Normal"
+    }
+
+    var watchStateLabel: String {
+        monitoringEnabled ? "Watching" : "Paused"
+    }
+
     func startMonitoring() {
         guard timer == nil else { return }
 

@@ -26,3 +26,24 @@ The exam demo should prove the core loop:
 5. Choose to continue, leave, or mark the session as intentional.
 6. Review the attention receipt.
 
+## Run
+
+```bash
+./script/build_and_run.sh
+```
+
+For a launch check:
+
+```bash
+./script/build_and_run.sh --verify
+```
+
+## Demo Script
+
+1. Open StillPoint with Demo Mode enabled.
+2. Click `Simulate drift`.
+3. Show the full-screen StillPoint intervention.
+4. Choose `Looking something up` to grant a bounded pass.
+5. Run the simulation again and choose `I drifted`.
+6. Open `Daily Receipt` to show the daily summary.
+7. Start `Deep Work Lock` to show the stricter coding-session guard.

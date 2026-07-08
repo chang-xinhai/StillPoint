@@ -36,6 +36,15 @@ Next platform: Android, using usage stats, accessibility, and overlay APIs.
 - Keep user data local by default. Do not add network calls unless a task explicitly requires them.
 - Avoid secrets in code, docs, commits, logs, or screenshots.
 
+## UI Rules
+
+- StillPoint should feel small, calm, and premium, closer to ScreenZen / Opal than a generic admin dashboard.
+- Prefer native macOS sidebar-detail structure, system colors, semantic foreground styles, subtle borders, and light shadows.
+- Keep cards sparse and purposeful. Do not nest cards or fill the app with heavy gray panels.
+- Use clear icon buttons or icon-led controls for primary actions; add help text where the action is not obvious.
+- Intervention UI should feel like a quiet system checkpoint, not an alarm, punishment screen, or marketing page.
+- Avoid oversized hero typography inside compact app panels.
+
 ## Commands
 
 Use these from the repo root:

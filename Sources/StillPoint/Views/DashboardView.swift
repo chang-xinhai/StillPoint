@@ -5,94 +5,141 @@ struct DashboardView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                header
+            VStack(alignment: .leading, spacing: 22) {
+                PageHeader(
+                    eyebrow: "StillPoint",
+                    title: "A quiet checkpoint for attention.",
+                    subtitle: "Watch explicit targets, allow purposeful use, and step in when a feed starts pulling."
+                )
 
-                HStack(spacing: 16) {
+                HStack(alignment: .top, spacing: 16) {
+                    LiveStatusPanel(model: model)
+                        .frame(minWidth: 420)
+
+                    QuickActionsPanel(model: model)
+                        .frame(width: 280)
+                }
+
+                HStack(spacing: 12) {
+                    let summary = model.dailySummary
+
                     MetricTile(
-                        title: "Current app",
-                        value: model.activeAppName,
-                        caption: model.activeBundleIdentifier.isEmpty ? "No bundle id" : model.activeBundleIdentifier,
-                        systemImage: "macwindow"
+                        title: "Drift checks",
+                        value: "\(summary.driftChecks)",
+                        caption: "Intent checks today",
+                        systemImage: "figure.mind.and.body",
+                        tint: .blue
                     )
                     MetricTile(
-                        title: "Watched time",
-                        value: model.activeElapsed.shortDurationString,
-                        caption: model.statusMessage,
-                        systemImage: "timer"
+                        title: "Protected",
+                        value: summary.protectedSeconds.shortDurationString,
+                        caption: "Estimated time returned",
+                        systemImage: "shield",
+                        tint: .green
                     )
                     MetricTile(
-                        title: "Rules",
+                        title: "Targets",
                         value: "\(model.enabledWatchCount)",
-                        caption: "Enabled watched targets",
-                        systemImage: "eye"
+                        caption: "Explicitly watched",
+                        systemImage: "eye",
+                        tint: .orange
                     )
                 }
-
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("Fast demo")
-                        .font(.headline)
-                    Text("Use the simulation button to show the full interruption loop even if Douyin is not installed on this Mac.")
-                        .foregroundStyle(.secondary)
-                    HStack {
-                        Button {
-                            model.simulateDouyinDrift()
-                        } label: {
-                            Label("Simulate Douyin drift", systemImage: "play.circle.fill")
-                        }
-                        .buttonStyle(.borderedProminent)
-
-                        Button {
-                            model.startFocusLock(minutes: model.demoMode ? 1 : 25)
-                        } label: {
-                            Label("Start Deep Work Lock", systemImage: "lock.shield.fill")
-                        }
-                    }
-                }
-                .padding()
-                .background(.regularMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            .padding(28)
-        }
-    }
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Protect the pause before the feed.")
-                .font(.largeTitle.weight(.semibold))
-            Text("StillPoint watches only the apps you choose, gives purposeful use a grace window, and interrupts when a session starts to drift.")
-                .foregroundStyle(.secondary)
-                .font(.title3)
+            .padding(30)
         }
     }
 }
 
-struct MetricTile: View {
-    var title: String
-    var value: String
-    var caption: String
-    var systemImage: String
+private struct LiveStatusPanel: View {
+    @ObservedObject var model: AppModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label(title, systemImage: systemImage)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.title2.weight(.semibold))
-                .lineLimit(1)
-                .minimumScaleFactor(0.65)
-            Text(caption)
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+        SurfaceCard(minHeight: 244) {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack {
+                    StatusPill(
+                        text: model.watchStateLabel,
+                        systemImage: model.monitoringEnabled ? "eye" : "eye.slash",
+                        tint: model.monitoringEnabled ? .green : .secondary
+                    )
+                    StatusPill(
+                        text: model.modeLabel,
+                        systemImage: model.focusLockActive ? "lock.shield" : "bolt",
+                        tint: model.focusLockActive ? .orange : .blue
+                    )
+                    Spacer()
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(model.activeAppName)
+                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.58)
+
+                    Text(model.activeBundleIdentifier.isEmpty ? "Waiting for a watched target" : model.activeBundleIdentifier)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(model.activeElapsed.shortDurationString)
+                            .font(.title3.weight(.semibold))
+                        Text("of \(model.visibleTriggerThreshold.shortDurationString)")
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                    }
+
+                    ProgressView(value: model.activeProgress)
+                        .controlSize(.small)
+                        .tint(model.focusLockActive ? .orange : .accentColor)
+                }
+
+                QuietDivider()
+
+                Text(model.statusMessage)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: 132, alignment: .topLeading)
-        .padding()
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
+private struct QuickActionsPanel: View {
+    @ObservedObject var model: AppModel
+
+    var body: some View {
+        SurfaceCard(minHeight: 244) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 10) {
+                    IconRoundel(systemImage: "pause.circle", tint: .blue)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Demo flow")
+                            .font(.headline)
+                        Text("One-minute proof loop")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                PrimaryActionButton(title: "Simulate drift", systemImage: "play.fill") {
+                    model.simulateDouyinDrift()
+                }
+
+                QuietActionButton(title: model.focusLockActive ? "Extend work lock" : "Start work lock", systemImage: "lock.shield", tint: .primary) {
+                    model.startFocusLock(minutes: model.demoMode ? 1 : 25)
+                }
+
+                Spacer(minLength: 0)
+
+                Text(model.demoMode ? "Demo thresholds are short." : "Normal thresholds are active.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}

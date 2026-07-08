@@ -5,15 +5,23 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Toggle("Enable monitoring", isOn: $model.monitoringEnabled)
-            Toggle("Demo mode", isOn: $model.demoMode)
-            LabeledContent("Normal threshold") {
-                Text(model.demoMode ? "8s" : "90s")
+            Section("Monitoring") {
+                Toggle("Enable monitoring", isOn: $model.monitoringEnabled)
+                Toggle("Demo mode", isOn: $model.demoMode)
             }
-            LabeledContent("Lock threshold") {
-                Text(model.demoMode ? "4s" : "10s")
+
+            Section("Thresholds") {
+                LabeledContent("Normal") {
+                    Text(model.demoMode ? "8s demo" : "90s")
+                        .foregroundStyle(.secondary)
+                }
+                LabeledContent("Lock") {
+                    Text(model.demoMode ? "4s demo" : "10s")
+                        .foregroundStyle(.secondary)
+                }
             }
         }
+        .formStyle(.grouped)
     }
 }
 

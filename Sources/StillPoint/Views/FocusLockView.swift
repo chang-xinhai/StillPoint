@@ -4,58 +4,85 @@ struct FocusLockView: View {
     @ObservedObject var model: AppModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Deep Work Lock")
-                    .font(.largeTitle.weight(.semibold))
-                Text("For coding sessions, build waits, and agent waits. Watched apps get a much shorter grace window.")
-                    .font(.title3)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 22) {
+                PageHeader(
+                    eyebrow: "Shield",
+                    title: "Deep Work Lock",
+                    subtitle: "A stricter gate for coding sessions, build waits, and agent waits."
+                )
+
+                SurfaceCard(minHeight: 230) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        HStack(alignment: .center, spacing: 14) {
+                            IconRoundel(
+                                systemImage: model.focusLockActive ? "lock.shield.fill" : "lock.open",
+                                tint: model.focusLockActive ? .orange : .secondary
+                            )
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(model.focusLockActive ? "Lock is active" : "Ready when you are")
+                                    .font(.title2.weight(.semibold))
+                                Text(model.focusLockActive ? "\(model.focusLockRemaining.shortDurationString) remaining" : "Watched feeds will get a stricter gate.")
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                        }
+
+                        HStack(spacing: 12) {
+                            MetricTile(
+                                title: "Threshold",
+                                value: model.demoMode ? "4s" : "10s",
+                                caption: "During active lock",
+                                systemImage: "bolt",
+                                tint: .orange
+                            )
+                            MetricTile(
+                                title: "Mode",
+                                value: model.demoMode ? "Demo" : "Normal",
+                                caption: "Presentation pacing",
+                                systemImage: "switch.2",
+                                tint: .blue
+                            )
+                        }
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    Button {
+                        model.startFocusLock(minutes: model.demoMode ? 1 : 25)
+                    } label: {
+                        Label(model.demoMode ? "1 min" : "25 min", systemImage: "lock.fill")
+                    }
+                    .buttonStyle(.borderedProminent)
+
+                    Button {
+                        model.startFocusLock(minutes: 45)
+                    } label: {
+                        Label("45 min", systemImage: "clock")
+                    }
+
+                    Button {
+                        model.startFocusLock(minutes: 90)
+                    } label: {
+                        Label("90 min", systemImage: "moon")
+                    }
+
+                    Spacer()
+
+                    Button(role: .destructive) {
+                        model.stopFocusLock()
+                    } label: {
+                        Label("Stop", systemImage: "lock.open")
+                    }
+                    .disabled(!model.focusLockActive)
+                }
+
+                Text("MVP: StillPoint proves the intervention loop. System-level anti-bypass belongs to the later Android / permissions pass.")
+                    .font(.callout)
                     .foregroundStyle(.secondary)
             }
-
-            HStack(spacing: 16) {
-                MetricTile(
-                    title: "Lock status",
-                    value: model.focusLockActive ? "Active" : "Off",
-                    caption: model.focusLockActive ? "\(model.focusLockRemaining.shortDurationString) remaining" : "No lock is running",
-                    systemImage: "lock.shield"
-                )
-                MetricTile(
-                    title: "Demo threshold",
-                    value: model.demoMode ? "4s" : "10s",
-                    caption: "Watched apps trigger faster during lock.",
-                    systemImage: "bolt"
-                )
-            }
-
-            HStack {
-                Button {
-                    model.startFocusLock(minutes: model.demoMode ? 1 : 25)
-                } label: {
-                    Label(model.demoMode ? "Lock for 1 min" : "Lock for 25 min", systemImage: "lock.fill")
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button {
-                    model.startFocusLock(minutes: 45)
-                } label: {
-                    Label("45 min", systemImage: "clock")
-                }
-
-                Button {
-                    model.stopFocusLock()
-                } label: {
-                    Label("Stop lock", systemImage: "lock.open")
-                }
-                .disabled(!model.focusLockActive)
-            }
-
-            Text("MVP note: this prototype does not promise system-level anti-bypass. It proves the loop: detect, cover the screen, force a deliberate choice, then record the outcome.")
-                .foregroundStyle(.secondary)
-
-            Spacer()
+            .padding(30)
         }
-        .padding(28)
     }
 }
-

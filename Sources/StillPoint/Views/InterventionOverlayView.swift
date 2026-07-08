@@ -6,79 +6,124 @@ struct InterventionOverlayView: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.88)
+            Color.black.opacity(0.72)
                 .ignoresSafeArea()
 
-            VStack(spacing: 26) {
-                Image(systemName: context.isFocusLock ? "lock.shield.fill" : "pause.circle.fill")
-                    .font(.system(size: 56, weight: .semibold))
-                    .foregroundStyle(.white)
+            VStack(spacing: 0) {
+                VStack(spacing: 22) {
+                    HStack {
+                        StatusPill(
+                            text: context.isFocusLock ? "Deep Work Lock" : "Grace window ended",
+                            systemImage: context.isFocusLock ? "lock.shield" : "pause.circle",
+                            tint: context.isFocusLock ? .orange : .blue
+                        )
+                        Spacer()
+                        Text(context.elapsedSeconds.shortDurationString)
+                            .font(.callout.monospacedDigit().weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
 
-                VStack(spacing: 10) {
-                    Text("StillPoint")
-                        .font(.system(size: 56, weight: .semibold))
-                        .foregroundStyle(.white)
-                    Text("You have been in \(context.appName) for \(context.elapsedSeconds.shortDurationString).")
-                        .font(.title2)
-                        .foregroundStyle(.white.opacity(0.76))
-                    Text("Are you still here for the reason you came?")
-                        .font(.title.weight(.medium))
-                        .foregroundStyle(.white)
-                }
+                    VStack(spacing: 9) {
+                        Text("StillPoint")
+                            .font(.system(size: 38, weight: .semibold))
+                        Text("Are you still here for the reason you came?")
+                            .font(.title2.weight(.semibold))
+                            .multilineTextAlignment(.center)
+                        Text("\(context.appName) has held focus long enough to check intent.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: 560)
 
-                Text(context.triggerReason)
-                    .font(.headline)
-                    .foregroundStyle(.white.opacity(0.7))
+                    QuietDivider()
 
-                VStack(spacing: 12) {
-                    HStack(spacing: 12) {
-                        actionButton("Looking something up", detail: "3 min", icon: "magnifyingglass") {
-                            onAction(.purposePass)
+                    VStack(spacing: 10) {
+                        HStack(spacing: 10) {
+                            OverlayChoiceButton(
+                                title: "Looking something up",
+                                detail: "Purpose pass",
+                                systemImage: "magnifyingglass",
+                                tint: .blue
+                            ) {
+                                onAction(.purposePass)
+                            }
+
+                            OverlayChoiceButton(
+                                title: "Intentional break",
+                                detail: "Bounded pause",
+                                systemImage: "cup.and.saucer",
+                                tint: .purple
+                            ) {
+                                onAction(.intentionalBreak)
+                            }
                         }
-                        actionButton("Intentional break", detail: "5 min", icon: "cup.and.saucer") {
-                            onAction(.intentionalBreak)
+
+                        HStack(spacing: 10) {
+                            OverlayChoiceButton(
+                                title: "I drifted",
+                                detail: "Close the feed",
+                                systemImage: "xmark.circle",
+                                tint: .red
+                            ) {
+                                onAction(.closeApp)
+                            }
+
+                            OverlayChoiceButton(
+                                title: "Lock this",
+                                detail: "Protect focus",
+                                systemImage: "lock.shield",
+                                tint: .orange
+                            ) {
+                                onAction(.startLock)
+                            }
                         }
                     }
-                    HStack(spacing: 12) {
-                        actionButton("I drifted", detail: "Close it", icon: "xmark.circle") {
-                            onAction(.closeApp)
-                        }
-                        actionButton("Lock this", detail: "Until focus ends", icon: "lock.shield") {
-                            onAction(.startLock)
-                        }
-                    }
                 }
-                .frame(maxWidth: 760)
+                .padding(26)
             }
+            .frame(width: 700)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(.white.opacity(0.14), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.34), radius: 30, x: 0, y: 18)
             .padding(40)
         }
+        .preferredColorScheme(.dark)
     }
+}
 
-    private func actionButton(
-        _ title: String,
-        detail: String,
-        icon: String,
-        action: @escaping () -> Void
-    ) -> some View {
+private struct OverlayChoiceButton: View {
+    var title: String
+    var detail: String
+    var systemImage: String
+    var tint: Color
+    var action: () -> Void
+
+    var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .frame(width: 24)
-                VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 11) {
+                IconRoundel(systemImage: systemImage, tint: tint)
+
+                VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.headline)
                     Text(detail)
-                        .font(.callout)
-                        .opacity(0.72)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
+
                 Spacer()
             }
-            .foregroundStyle(.white)
-            .padding()
+            .padding(13)
             .frame(maxWidth: .infinity, minHeight: 72)
-            .background(.white.opacity(0.14))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .background(.primary.opacity(0.055), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(.primary.opacity(0.08), lineWidth: 1)
+            }
         }
         .buttonStyle(.plain)
     }

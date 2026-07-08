@@ -57,6 +57,15 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
+    var detail: String {
+        switch self {
+        case .dashboard: "Live state"
+        case .rules: "Targets"
+        case .focusLock: "Shield"
+        case .receipt: "Today"
+        }
+    }
+
     var systemImage: String {
         switch self {
         case .dashboard: "gauge.with.dots.needle.67percent"
