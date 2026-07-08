@@ -337,7 +337,10 @@ final class AppModel: ObservableObject {
 
         activeAppName = appName
         activeBundleIdentifier = bundleIdentifier
-        activeGateSeconds = watchedApp.gateSeconds
+        activeGateSeconds = AttentionGatePolicy.effectiveGateSeconds(
+            appGateSeconds: watchedApp.gateSeconds,
+            focusLockActive: focusLockActive
+        )
 
         let key = bundleIdentifier.isEmpty ? appName : bundleIdentifier
         if activeKey != key {
@@ -358,7 +361,7 @@ final class AppModel: ObservableObject {
             return
         }
 
-        let threshold = watchedApp.gateSeconds
+        let threshold = activeGateSeconds
         statusMessage = t(
             "\(appName) watched for \(activeElapsed.shortDurationString). Gate: \(threshold.shortDurationString).",
             "\(appName) 已持续 \(activeElapsed.shortDurationString)，阈值 \(threshold.shortDurationString)。"
@@ -453,25 +456,25 @@ final class AppModel: ObservableObject {
 
         switch action {
         case .purposePass:
-            grantedSeconds = max(activeGateSeconds, 2 * 60)
+            grantedSeconds = AttentionGatePolicy.purposePassSeconds(activeGateSeconds: activeGateSeconds)
             purposePassUntilByKey[key] = now.addingTimeInterval(grantedSeconds)
             statusMessage = t(
                 "Purpose pass granted for \(context.appName): \(grantedSeconds.shortDurationString).",
                 "\(context.appName) 已获得查找通行：\(grantedSeconds.shortDurationString)。"
             )
         case .intentionalBreak:
-            grantedSeconds = max(activeGateSeconds, 5 * 60)
+            grantedSeconds = AttentionGatePolicy.intentionalBreakSeconds(activeGateSeconds: activeGateSeconds)
             purposePassUntilByKey[key] = now.addingTimeInterval(grantedSeconds)
             statusMessage = t(
                 "Intentional break granted for \(context.appName): \(grantedSeconds.shortDurationString).",
                 "\(context.appName) 已获得有意休息：\(grantedSeconds.shortDurationString)。"
             )
         case .closeApp:
-            protectedSeconds = max(activeGateSeconds, 10 * 60)
+            protectedSeconds = AttentionGatePolicy.closedDriftProtectedSeconds(activeGateSeconds: activeGateSeconds)
             hideOffendingApp()
             statusMessage = t("Closed a drift in \(context.appName).", "已中断 \(context.appName) 的走神。")
         case .startLock:
-            grantedSeconds = 25 * 60
+            grantedSeconds = AttentionGatePolicy.overlayFocusLockSeconds
             protectedSeconds = grantedSeconds
             focusLockUntil = now.addingTimeInterval(grantedSeconds)
             hideOffendingApp()

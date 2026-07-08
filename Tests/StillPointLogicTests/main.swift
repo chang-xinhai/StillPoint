@@ -83,6 +83,30 @@ struct StillPointLogicTests {
             gateSeconds: 5 * 60
         )
         expect(customGateApp.gateSeconds == 5 * 60, "watched app can store a custom gate")
+        expect(
+            AttentionGatePolicy.effectiveGateSeconds(appGateSeconds: customGateApp.gateSeconds, focusLockActive: false) == 5 * 60,
+            "normal mode keeps the watched app gate"
+        )
+        expect(
+            AttentionGatePolicy.effectiveGateSeconds(appGateSeconds: customGateApp.gateSeconds, focusLockActive: true) == 3,
+            "deep work lock uses a three-second gate"
+        )
+        expect(
+            AttentionGatePolicy.purposePassSeconds(activeGateSeconds: 3) == 2 * 60,
+            "purpose pass grants at least two minutes"
+        )
+        expect(
+            AttentionGatePolicy.intentionalBreakSeconds(activeGateSeconds: 3) == 5 * 60,
+            "intentional break grants at least five minutes"
+        )
+        expect(
+            AttentionGatePolicy.closedDriftProtectedSeconds(activeGateSeconds: 3) == 10 * 60,
+            "closed drift protects at least ten minutes without extending the lock"
+        )
+        expect(
+            AttentionGatePolicy.overlayFocusLockSeconds == 25 * 60,
+            "overlay lock button resets deep work lock to twenty-five minutes"
+        )
 
         guard failures == 0 else {
             print("\(failures) StillPoint logic test(s) failed.")

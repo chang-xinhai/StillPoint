@@ -39,7 +39,7 @@ Protect the pause before the feed.
 | **Menu bar guardian** | Runs as a no-Dock macOS menu bar utility and keeps watching after the Control Center window is closed. |
 | **Foreground app monitoring** | Watches explicit high-risk apps, such as short-video or recommendation-heavy apps, using `NSWorkspace.shared.frontmostApplication`. |
 | **Intent checkpoint** | When a watched app crosses the threshold, StillPoint asks for a deliberate choice instead of instantly blocking everything. |
-| **Deep Work Lock** | A stricter gate for coding, build waits, and agent-waiting sessions. |
+| **Deep Work Lock** | A stricter 3-second checkpoint for coding, build waits, and agent-waiting sessions. |
 | **Daily Attention Receipt** | Summarizes the day once, without interrupting after every app exit. |
 | **Local-first prototype** | Stores demo state locally and avoids network calls in the core app. |
 

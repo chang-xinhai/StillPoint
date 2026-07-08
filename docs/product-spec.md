@@ -74,8 +74,10 @@ StillPoint 的差异化：
 
 1. 用户点击 `Start Deep Work Lock`，选择 25 / 45 / 90 分钟。
 2. 锁定期内，高风险应用进入强保护。
-3. 打开 watched app 时，不再给长 Grace Window，而是快速触发 intervention。
-4. 用户仍可 emergency unlock，但摩擦更高：
+3. watched app 成为前台满 3 秒后直接触发 intervention，不再使用普通应用阈值。
+4. 如果用户选择 `I drifted`，只隐藏应用并记录中断，不刷新 Deep Work Lock 剩余时间。
+5. 如果用户选择 `Lock this`，隐藏应用并把 Deep Work Lock 重置为 25 分钟。
+6. 用户仍可 emergency unlock，但摩擦更高：
 
    - 等待一段时间；
    - 写出当前目的；
@@ -112,7 +114,7 @@ StillPoint 不在用户刚打开应用时立刻阻止。默认策略：
 
 - 普通模式：60-120 秒宽限。
 - Demo 模式：8-15 秒宽限，便于现场展示。
-- Deep Work Lock：0-15 秒宽限。
+- Deep Work Lock：3 秒检查点。
 
 ### 4.3 Purpose Pass
 
@@ -197,7 +199,7 @@ macOS 原型：
 - 使用定时器计算 watched app 的连续停留时间。
 - 命中阈值后创建屏幕级 overlay window。
 - 用户选择后更新本地状态和当日聚合记录。
-- Deep Work Lock 通过更短阈值和更高摩擦实现。
+- Deep Work Lock 通过 3 秒阈值和更高摩擦实现。
 
 后续 Android 迁移：
 

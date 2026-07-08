@@ -1,3 +1,4 @@
+import StillPointCore
 import SwiftUI
 
 struct FocusLockView: View {
@@ -26,14 +27,14 @@ struct FocusLockView: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(model.focusLockActive ? model.t("Lock is active", "锁定生效中") : model.t("Ready when you are", "准备就绪"))
                                     .font(.title2.weight(.semibold))
-                                Text(model.focusLockActive ? model.t("\(model.focusLockRemaining.shortDurationString) remaining", "剩余 \(model.focusLockRemaining.shortDurationString)") : model.t("Watched feeds keep their per-app gates.", "被监控信息流会使用各自的应用阈值。"))
+                                Text(model.focusLockActive ? model.t("\(model.focusLockRemaining.shortDurationString) remaining", "剩余 \(model.focusLockRemaining.shortDurationString)") : model.t("Watched feeds switch to a 3s checkpoint during lock.", "锁定期间，被监控信息流会切换为 3 秒检查点。"))
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
                         }
 
                         ProgressLine(
-                            value: model.focusLockActive ? 1 - (model.focusLockRemaining / TimeInterval(25 * 60)) : 0,
+                            value: model.focusLockActive ? 1 - (model.focusLockRemaining / AttentionGatePolicy.overlayFocusLockSeconds) : 0,
                             tint: .orange,
                             marker: nil
                         )
