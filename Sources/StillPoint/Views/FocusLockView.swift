@@ -7,9 +7,12 @@ struct FocusLockView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 WorkspaceHeader(
-                    eyebrow: "Shield",
-                    title: "Deep Work Lock",
-                    subtitle: "A stricter gate for coding sessions, build waits, and agent waits."
+                    eyebrow: model.t("Shield", "保护"),
+                    title: model.t("Deep Work Lock", "专注锁"),
+                    subtitle: model.t(
+                        "A lock for coding sessions, build waits, and agent waits.",
+                        "给编程、构建等待、等待 agent 回复时使用的锁定模式。"
+                    )
                 )
 
                 PlainPanel(minHeight: 232) {
@@ -21,9 +24,9 @@ struct FocusLockView: View {
                             )
 
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(model.focusLockActive ? "Lock is active" : "Ready when you are")
+                                Text(model.focusLockActive ? model.t("Lock is active", "锁定生效中") : model.t("Ready when you are", "准备就绪"))
                                     .font(.title2.weight(.semibold))
-                                Text(model.focusLockActive ? "\(model.focusLockRemaining.shortDurationString) remaining" : "Watched feeds will get a stricter gate.")
+                                Text(model.focusLockActive ? model.t("\(model.focusLockRemaining.shortDurationString) remaining", "剩余 \(model.focusLockRemaining.shortDurationString)") : model.t("Watched feeds keep their per-app gates.", "被监控信息流会使用各自的应用阈值。"))
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
@@ -36,11 +39,11 @@ struct FocusLockView: View {
                         )
 
                         VStack(spacing: 0) {
-                            DataRow("Strict gate", value: model.visibleTriggerThreshold.shortDurationString, caption: "Current watched-app gate")
+                            DataRow(model.t("Current gate", "当前阈值"), value: model.visibleTriggerThreshold.shortDurationString, caption: model.t("From the active watched app", "来自当前被监控应用"))
                             HairlineDivider()
-                            DataRow("Mode", value: model.modeLabel, caption: "Per-app timing")
+                            DataRow(model.t("Mode", "模式"), value: model.modeLabel, caption: model.t("Per-app timing", "逐应用计时"))
                             HairlineDivider()
-                            DataRow("Watched targets", value: "\(model.enabledWatchCount)", caption: "Apps covered by the shield")
+                            DataRow(model.t("Watched targets", "监控目标"), value: "\(model.enabledWatchCount)", caption: model.t("Apps covered by the shield", "被保护机制覆盖的应用"))
                         }
                     }
                 }
@@ -49,20 +52,20 @@ struct FocusLockView: View {
                     Button {
                         model.startFocusLock(minutes: 25)
                     } label: {
-                        Label("25 min", systemImage: "lock.fill")
+                        Label(model.t("25 min", "25 分钟"), systemImage: "lock.fill")
                     }
                     .buttonStyle(.borderedProminent)
 
                     Button {
                         model.startFocusLock(minutes: 45)
                     } label: {
-                        Label("45 min", systemImage: "clock")
+                        Label(model.t("45 min", "45 分钟"), systemImage: "clock")
                     }
 
                     Button {
                         model.startFocusLock(minutes: 90)
                     } label: {
-                        Label("90 min", systemImage: "moon")
+                        Label(model.t("90 min", "90 分钟"), systemImage: "moon")
                     }
 
                     Spacer()
@@ -70,12 +73,15 @@ struct FocusLockView: View {
                     Button(role: .destructive) {
                         model.stopFocusLock()
                     } label: {
-                        Label("Stop", systemImage: "lock.open")
+                        Label(model.t("Stop", "停止"), systemImage: "lock.open")
                     }
                     .disabled(!model.focusLockActive)
                 }
 
-                Text("MVP: StillPoint proves the intervention loop. System-level anti-bypass belongs to the later Android / permissions pass.")
+                Text(model.t(
+                    "MVP: StillPoint proves the intervention loop. System-level anti-bypass belongs to the later Android / permissions pass.",
+                    "MVP 阶段先验证干预闭环。系统级防绕过会放到后续 Android / 权限版本。"
+                ))
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
