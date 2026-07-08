@@ -53,6 +53,24 @@ struct StillPointLogicTests {
             "unrelated work app does not match"
         )
 
+        let generatedTerms = WatchedApp.matchTerms(
+            applicationName: "Douyin",
+            bundleIdentifier: "com.ss.iphone.ugc.Aweme"
+        )
+        expect(
+            generatedTerms == ["com.ss.iphone.ugc.Aweme", "Douyin"],
+            "custom app terms keep bundle id before display name"
+        )
+
+        let customApp = WatchedApp(
+            applicationName: "Douyin",
+            bundleIdentifier: "com.ss.iphone.ugc.Aweme"
+        )
+        expect(
+            customApp.matches(appName: "Anything", bundleIdentifier: "com.ss.iphone.ugc.Aweme"),
+            "custom app matches generated bundle id term"
+        )
+
         guard failures == 0 else {
             print("\(failures) StillPoint logic test(s) failed.")
             exit(1)
@@ -61,4 +79,3 @@ struct StillPointLogicTests {
         print("All StillPoint logic tests passed.")
     }
 }
-
