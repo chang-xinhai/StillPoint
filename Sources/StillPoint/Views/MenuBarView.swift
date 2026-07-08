@@ -46,7 +46,7 @@ struct MenuBarView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("StillPoint")
                     .font(.title3.weight(.semibold))
-                Text(model.monitoringEnabled ? "Watching from the menu bar" : "Monitoring paused")
+                Text(model.monitoringEnabled ? model.t("Watching from the menu bar", "正在菜单栏监控") : model.t("Monitoring paused", "监控已暂停"))
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
@@ -56,7 +56,7 @@ struct MenuBarView: View {
             VStack(alignment: .trailing, spacing: 3) {
                 Text(model.modeLabel)
                     .font(.callout.weight(.semibold))
-                Text("\(model.visibleTriggerThreshold.shortDurationString) gate")
+                Text(model.t("\(model.visibleTriggerThreshold.shortDurationString) gate", "阈值 \(model.visibleTriggerThreshold.shortDurationString)"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -65,12 +65,12 @@ struct MenuBarView: View {
 
     private var gateSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            MenuSectionTitle("Gate")
+            MenuSectionTitle(model.t("Gate", "阈值"))
             QuotaProgressRow(
                 title: model.activeAppName,
                 subtitle: model.activeBundleIdentifier.isEmpty ? model.statusMessage : model.activeBundleIdentifier,
-                leadingValue: "\(Int(max(0, 1 - model.activeProgress) * 100))% safe",
-                trailingValue: "\(model.visibleTriggerThreshold.shortDurationString) gate",
+                leadingValue: model.t("\(Int(max(0, 1 - model.activeProgress) * 100))% safe", "\(Int(max(0, 1 - model.activeProgress) * 100))% 安全"),
+                trailingValue: model.t("\(model.visibleTriggerThreshold.shortDurationString) gate", "阈值 \(model.visibleTriggerThreshold.shortDurationString)"),
                 value: model.activeProgress,
                 tint: model.focusLockActive ? .orange : .cyan
             )
@@ -79,12 +79,12 @@ struct MenuBarView: View {
 
     private var lockSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            MenuSectionTitle("Deep Work")
+            MenuSectionTitle(model.t("Deep Work", "专注"))
             QuotaProgressRow(
-                title: "Lock",
-                subtitle: model.focusLockActive ? "\(model.focusLockRemaining.shortDurationString) remaining" : "Off",
-                leadingValue: model.focusLockActive ? "active" : "ready",
-                trailingValue: "25 min",
+                title: model.t("Lock", "锁定"),
+                subtitle: model.focusLockActive ? model.t("\(model.focusLockRemaining.shortDurationString) remaining", "剩余 \(model.focusLockRemaining.shortDurationString)") : model.t("Off", "关闭"),
+                leadingValue: model.focusLockActive ? model.t("active", "生效中") : model.t("ready", "待命"),
+                trailingValue: model.t("25 min", "25 分钟"),
                 value: model.focusLockActive ? 0.72 : 0,
                 tint: .orange
             )
@@ -95,11 +95,11 @@ struct MenuBarView: View {
         let summary = model.dailySummary
 
         return VStack(alignment: .leading, spacing: 8) {
-            MenuSectionTitle("Today")
+            MenuSectionTitle(model.t("Today", "今天"))
             CompactDataBlock(rows: [
-                ("Checks", "\(summary.driftChecks)", "Intent moments"),
-                ("Closed", "\(summary.closedDrifts)", "Feeds left"),
-                ("Protected", summary.protectedSeconds.shortDurationString, "Estimated time returned")
+                (model.t("Checks", "检查"), "\(summary.driftChecks)", model.t("Intent moments", "意图检查")),
+                (model.t("Closed", "关闭"), "\(summary.closedDrifts)", model.t("Feeds left", "离开的信息流")),
+                (model.t("Protected", "保护"), summary.protectedSeconds.shortDurationString, model.t("Estimated time returned", "估算找回时间"))
             ])
         }
     }
