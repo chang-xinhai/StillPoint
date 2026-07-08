@@ -3,8 +3,9 @@
 ## Positioning
 
 StillPoint is not another strict app blocker. It is an intention checkpoint:
-when the user drifts into a monitored app or site for too long, StillPoint
-occupies the screen and asks for a reason to continue.
+when the user drifts from purposeful use into a monitored feed for too long,
+StillPoint occupies the screen and asks whether they are still there for the
+reason they came.
 
 ## Competitor Reference
 
@@ -15,9 +16,9 @@ occupies the screen and asks for a reason to continue.
 
 ## Differentiation
 
-StillPoint focuses on protecting boredom and restoring agency. The product
-should feel less like punishment and more like a quiet checkpoint between
-impulse and attention.
+StillPoint focuses on protecting boredom and restoring agency. It should feel
+less like punishment and more like a quiet checkpoint between impulse and
+attention. Attention Receipt is a daily review, not a per-exit interruption.
 
 ## macOS MVP
 
@@ -26,7 +27,8 @@ impulse and attention.
 - Sustained-use timer.
 - Full-screen interruption overlay.
 - Intent prompt before continuing.
-- Local session log.
+- Daily attention receipt summary.
+- Deep Work Lock for coding and agent-waiting sessions.
 - Demo mode with short thresholds.
 
 ## Android Migration Notes
@@ -35,4 +37,3 @@ The Android version should use UsageStatsManager for usage state, an
 AccessibilityService for foreground context, and a system overlay for the
 intervention surface. Xiaomi / HyperOS will likely require manual permissions
 for overlay, accessibility, battery, and background behavior.
-

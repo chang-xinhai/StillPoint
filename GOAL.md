@@ -1,0 +1,142 @@
+# GOAL.md
+
+Current objective:
+
+> Deliver a runnable macOS StillPoint demo that detects monitored app drift, interrupts with a full-screen choice, supports Deep Work Lock, and summarizes the day with a Daily Attention Receipt.
+
+This file is the project-level trace for Codex `/goal` mode and human review.
+Update the status when a phase is genuinely implemented and verified.
+
+## Phase 0: Product Definition
+
+Status: Done
+
+Goal:
+
+- Define StillPoint's product philosophy, user problem, non-goals, and MVP scope.
+
+Acceptance:
+
+- `docs/product-spec.md` explains product principles, macOS Douyin scenario, Deep Work Lock, Daily Attention Receipt, technical principle, and expected effect.
+- `docs/product-brief.md` gives a short positioning summary.
+
+## Phase 1: Runnable macOS Shell
+
+Status: Done
+
+Goal:
+
+- Create a SwiftPM macOS app that launches as a real app bundle and can be run from Codex.
+
+Acceptance:
+
+- `Package.swift` builds an executable named `StillPoint`.
+- `script/build_and_run.sh` builds, bundles, launches, and supports `--verify`.
+- `.codex/environments/environment.toml` exposes a Run action.
+- `./script/build_and_run.sh --verify` succeeds.
+
+## Phase 2: Drift Detection Core
+
+Status: In progress
+
+Goal:
+
+- Detect when the user stays in a watched app long enough to trigger a check.
+
+Acceptance:
+
+- Foreground app monitoring uses `NSWorkspace.shared.frontmostApplication`.
+- StillPoint ignores itself.
+- Watched apps are configurable in the UI.
+- Demo Mode uses a short threshold for fast presentation.
+- Normal Mode uses a longer grace window to avoid interrupting valid use.
+- Rule matching logic has unit tests via `./script/test.sh`.
+
+## Phase 3: Intervention Overlay
+
+Status: In progress
+
+Goal:
+
+- Interrupt drifting with a full-screen, calm, decisive choice surface.
+
+Acceptance:
+
+- Overlay appears above other apps.
+- User can choose:
+  - Looking something up
+  - Intentional break
+  - I drifted, close it
+  - Lock this until focus ends
+- Choosing a pass grants bounded time.
+- Choosing close hides or exits the offending app where possible.
+- Overlay behavior is verified with the simulator/demo button.
+
+## Phase 4: Deep Work Lock
+
+Status: In progress
+
+Goal:
+
+- Protect coding and agent-waiting sessions from quick feed escapes.
+
+Acceptance:
+
+- User can start and stop Deep Work Lock.
+- Lock mode uses a stricter threshold.
+- Lock state is visible in the UI.
+- Lock events contribute to Daily Attention Receipt.
+
+## Phase 5: Daily Attention Receipt
+
+Status: In progress
+
+Goal:
+
+- Summarize the day without interrupting every app exit.
+
+Acceptance:
+
+- Receipt aggregates today's drift checks, purpose passes, closed drifts, locks, and protected time.
+- Receipt appears inside the app, not as a per-exit popup.
+- Receipt language is low-pressure and non-shaming.
+
+## Phase 6: Polish and Reliability
+
+Status: Not started
+
+Goal:
+
+- Make the demo stable enough for presentation.
+
+Acceptance:
+
+- `./script/test.sh` passes.
+- `./script/build_and_run.sh --verify` passes.
+- Main flow can be demoed in under 60 seconds.
+- README includes demo steps.
+- GitHub `main` is pushed.
+
+## Phase 7: Android Migration Plan
+
+Status: Not started
+
+Goal:
+
+- Explain how StillPoint moves from macOS prototype to Xiaomi 14 / Android.
+
+Acceptance:
+
+- Document Android architecture: UsageStatsManager, AccessibilityService, overlay.
+- Document expected Xiaomi / HyperOS permission friction.
+- Identify which macOS MVP concepts map directly and which need redesign.
+
+## Current Demo Script
+
+1. Open StillPoint.
+2. Keep Demo Mode on.
+3. Click `Simulate Douyin drift`.
+4. Show the full-screen intervention.
+5. Choose `I drifted · Close it` or `Looking something up · 3 min`.
+6. Open `Daily Receipt` and show the aggregated result.
+7. Start `Deep Work Lock` and explain the stricter threshold.
