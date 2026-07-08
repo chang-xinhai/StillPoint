@@ -247,6 +247,27 @@ struct IconRoundel: View {
     }
 }
 
+struct WatchStateButton: View {
+    @Binding var isEnabled: Bool
+    var language: AppLanguage
+
+    var body: some View {
+        Button {
+            isEnabled.toggle()
+        } label: {
+            Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
+                .font(.title3)
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(isEnabled ? .green : .secondary)
+                .frame(width: 24, height: 24)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(isEnabled ? language.text("Ignore target", "忽略目标") : language.text("Enable target", "启用目标"))
+        .accessibilityLabel(isEnabled ? language.text("Disable watched target", "停用监控目标") : language.text("Enable watched target", "启用监控目标"))
+    }
+}
+
 struct HairlineDivider: View {
     var body: some View {
         Rectangle()

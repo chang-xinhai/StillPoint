@@ -85,10 +85,7 @@ private struct WatchTargetRow: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
-            Image(systemName: app.isEnabled ? "checkmark.circle.fill" : "circle")
-                .font(.title3)
-                .foregroundStyle(app.isEnabled ? .green : .secondary)
-                .frame(width: 24)
+            WatchStateButton(isEnabled: $app.isEnabled, language: language)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(app.displayName)

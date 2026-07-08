@@ -15,7 +15,7 @@
     >
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/stillpoint-icon.png">
-    <meta name="theme-color" content="#f6f7fb">
+    <meta name="theme-color" content="#fbfcff">
     <title>StillPoint - A pause button for the feed</title>
     <link rel="icon" href="assets/stillpoint-icon.png">
     <link rel="stylesheet" href="styles.css">
@@ -27,21 +27,30 @@
         <span>StillPoint</span>
       </a>
       <nav class="nav-links" aria-label="Sections">
-        <a href="#features">Features</a>
-        <a href="#how">How it works</a>
-        <a href="#release">Download</a>
-        <a href="https://github.com/chang-xinhai/StillPoint">Source</a>
+        <a href="#features" data-en="Features" data-zh="功能"></a>
+        <a href="#how" data-en="How it works" data-zh="原理"></a>
+        <a href="#release" data-en="Download" data-zh="下载"></a>
+        <a href="https://github.com/chang-xinhai/StillPoint" data-en="Source" data-zh="源码"></a>
       </nav>
-      <a class="download-pill" href="https://github.com/chang-xinhai/StillPoint/releases">
-        <span aria-hidden="true">●</span>
-        Download macOS
-      </a>
+      <div class="header-actions">
+        <button class="language-toggle" type="button" data-language-toggle aria-label="切换到中文">
+          <span class="language-icon" aria-hidden="true">
+            <span data-lang-current>EN</span>
+            <i></i>
+            <span data-lang-next>中</span>
+          </span>
+        </button>
+        <a class="download-pill" href="https://github.com/chang-xinhai/StillPoint/releases">
+          <span aria-hidden="true">●</span>
+          <span data-en="Download macOS" data-zh="下载 macOS"></span>
+        </a>
+      </div>
     </header>
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
         <div class="device-stage">
-          <div class="stage-glass" aria-hidden="true"></div>
+          <div class="stage-glow" aria-hidden="true"></div>
           <div class="stage-menu" aria-label="macOS menu bar mockup">
             <div class="menu-left">
               <span class="apple-mark" aria-hidden="true">&#63743;</span>
@@ -63,19 +72,21 @@
           </div>
 
           <div class="hero-copy">
-            <p class="kicker">Menu bar attention guardian · macOS</p>
+            <p class="kicker" data-en="Menu bar attention guardian · macOS" data-zh="菜单栏注意力守门人 · macOS"></p>
             <h1 id="hero-title">
-              <span>A pause</span>
-              <span>button</span>
-              <span>for the feed.</span>
+              <span data-en="A pause" data-zh="给信息流"></span>
+              <span data-en="button" data-zh="一个"></span>
+              <span data-en="for the feed." data-zh="暂停键。"></span>
             </h1>
-            <p class="hero-body">
-              StillPoint lives in your menu bar and asks for intent before a quick check becomes doomscrolling.
-            </p>
+            <p
+              class="hero-body"
+              data-en="StillPoint lives in your menu bar and asks for intent before a quick check becomes doomscrolling."
+              data-zh="StillPoint 常驻菜单栏，在一次随手查看滑向无意识刷屏之前，轻轻问你一句：你真的要继续吗？"
+            ></p>
             <div class="hero-actions" aria-label="Download and source options">
               <a class="primary-action" href="https://github.com/chang-xinhai/StillPoint/releases">
                 <span aria-hidden="true">●</span>
-                Download macOS
+                <span data-en="Download macOS" data-zh="下载 macOS"></span>
               </a>
               <button class="command-copy" type="button" aria-label="Install from source command">
                 <span>$</span>
@@ -83,9 +94,9 @@
               </button>
             </div>
             <ul class="trust-list" aria-label="StillPoint principles">
-              <li>Private by design</li>
-              <li>Open source</li>
-              <li>Small by choice</li>
+              <li data-en="Private by design" data-zh="默认本地私有"></li>
+              <li data-en="Open source" data-zh="开源可审计"></li>
+              <li data-en="Small by choice" data-zh="克制小工具"></li>
             </ul>
           </div>
 
@@ -95,43 +106,46 @@
               <img src="assets/stillpoint-icon.png" alt="" width="42" height="42">
               <div>
                 <strong>StillPoint</strong>
-                <span>Deep Work · 3s checkpoint</span>
+                <span data-en="Deep Work · 3s checkpoint" data-zh="深度工作 · 3 秒检查点"></span>
               </div>
             </div>
 
             <div class="panel-rule"></div>
 
             <div class="gate-row">
-              <p>Current gate</p>
+              <p data-en="Current gate" data-zh="当前守门"></p>
               <strong>Douyin</strong>
               <span>0s / 3s</span>
               <div class="meter" aria-hidden="true"><i></i><b></b></div>
-              <small>Deep Work Lock overrides the normal 2m app gate.</small>
+              <small
+                data-en="Deep Work Lock overrides the normal 2m app gate."
+                data-zh="深度工作锁会覆盖普通 2 分钟应用门槛。"
+              ></small>
             </div>
 
             <div class="tuning-row">
               <div>
-                <p>Normal gate</p>
+                <p data-en="Normal gate" data-zh="普通门槛"></p>
                 <strong>Douyin / TikTok</strong>
               </div>
               <span>2m</span>
               <div class="mini-slider" aria-hidden="true"><i></i></div>
-              <small>Still adjustable from the menu bar.</small>
+              <small data-en="Still adjustable from the menu bar." data-zh="仍可在菜单栏中滑动调整。"></small>
             </div>
 
             <div class="panel-rule"></div>
 
             <div class="receipt-grid">
               <div>
-                <span>Checks</span>
+                <span data-en="Checks" data-zh="检查"></span>
                 <strong>4</strong>
               </div>
               <div>
-                <span>Closed</span>
+                <span data-en="Closed" data-zh="关闭"></span>
                 <strong>2</strong>
               </div>
               <div>
-                <span>Protected</span>
+                <span data-en="Protected" data-zh="保护"></span>
                 <strong>25m</strong>
               </div>
             </div>
@@ -141,22 +155,22 @@
             <div class="menu-actions" aria-label="StillPoint actions">
               <button type="button">
                 <span class="action-icon">□</span>
-                <span>Open Control Center</span>
+                <span data-en="Open Control Center" data-zh="打开控制中心"></span>
                 <em>⌘ O</em>
               </button>
               <button type="button">
                 <span class="action-icon">◈</span>
-                <span>Start 25m Deep Work</span>
+                <span data-en="Start 25m Deep Work" data-zh="开始 25 分钟深度工作"></span>
                 <em></em>
               </button>
               <button type="button">
                 <span class="action-icon">Ⅱ</span>
-                <span>Pause watching</span>
+                <span data-en="Pause watching" data-zh="暂停监控"></span>
                 <em>⌘ P</em>
               </button>
               <button type="button">
                 <span class="action-icon">×</span>
-                <span>Quit StillPoint</span>
+                <span data-en="Quit StillPoint" data-zh="退出 StillPoint"></span>
                 <em>⌘ Q</em>
               </button>
             </div>
@@ -166,69 +180,101 @@
 
       <section class="feature-strip" id="features" aria-labelledby="features-title">
         <div>
-          <p class="section-label">Why it exists</p>
-          <h2 id="features-title">Not another blocker. A checkpoint.</h2>
+          <p class="section-label" data-en="Why it exists" data-zh="为什么做"></p>
+          <h2 id="features-title" data-en="Not another blocker. A checkpoint." data-zh="不是又一个封锁器，而是一个检查点。"></h2>
         </div>
         <div class="feature-list">
           <article>
-            <h3>Grace first</h3>
-            <p>Quick, purposeful visits stay uninterrupted.</p>
+            <h3 data-en="Grace first" data-zh="先给自由"></h3>
+            <p data-en="Quick, purposeful visits stay uninterrupted." data-zh="真正有目的的短暂查看，不会被粗暴打断。"></p>
           </article>
           <article>
-            <h3>Intent before drift</h3>
-            <p>When a feed starts pulling, StillPoint asks for one deliberate choice.</p>
+            <h3 data-en="Intent before drift" data-zh="走神前确认意图"></h3>
+            <p
+              data-en="When a feed starts pulling, StillPoint asks for one deliberate choice."
+              data-zh="当推荐流开始把你拽走，StillPoint 只要求你做一次明确选择。"
+            ></p>
           </article>
           <article>
-            <h3>Daily receipt</h3>
-            <p>Review protected time once, without per-exit nagging.</p>
+            <h3 data-en="Daily receipt" data-zh="每日注意力小票"></h3>
+            <p data-en="Review protected time once, without per-exit nagging." data-zh="每天汇总一次被保护的时间，不在每次退出时打扰你。"></p>
           </article>
         </div>
       </section>
 
       <section class="workflow" id="how" aria-labelledby="how-title">
         <div class="workflow-copy">
-          <p class="section-label">How it works</p>
-          <h2 id="how-title">A small loop for the moments between tasks.</h2>
-          <p>
-            StillPoint watches selected apps, keeps a short grace window, and switches to a stronger gate during Deep Work Lock.
-          </p>
+          <p class="section-label" data-en="How it works" data-zh="如何工作"></p>
+          <h2 id="how-title" data-en="A small loop for the moments between tasks." data-zh="为任务缝隙设计的一次小循环。"></h2>
+          <p
+            data-en="StillPoint watches selected apps, keeps a short grace window, and switches to a stronger gate during Deep Work Lock."
+            data-zh="StillPoint 只监控你明确选择的应用，保留短暂宽限；当开启深度工作锁时，再切换到更强的 3 秒门槛。"
+          ></p>
         </div>
         <div class="workflow-steps">
           <div>
             <span>01</span>
-            <strong>Watch explicit targets</strong>
-            <p>Douyin, Bilibili, Xiaohongshu, or any app you add later.</p>
+            <strong data-en="Watch explicit targets" data-zh="只看明确目标"></strong>
+            <p data-en="Douyin, Bilibili, Xiaohongshu, or any app you add later." data-zh="抖音、Bilibili、小红书，或者之后手动加入的应用。"></p>
           </div>
           <div>
             <span>02</span>
-            <strong>Ask for intent</strong>
-            <p>Looking something up, taking a break, or closing the drift.</p>
+            <strong data-en="Ask for intent" data-zh="询问真实意图"></strong>
+            <p data-en="Looking something up, taking a break, or closing the drift." data-zh="查资料、主动休息，还是承认走神并关掉它。"></p>
           </div>
           <div>
             <span>03</span>
-            <strong>Protect the gap</strong>
-            <p>Deep Work Lock covers build waits, agent waits, and context switches.</p>
+            <strong data-en="Protect the gap" data-zh="保护等待时间"></strong>
+            <p data-en="Deep Work Lock covers build waits, agent waits, and context switches." data-zh="深度工作锁覆盖构建等待、Agent 等待和任务切换间隙。"></p>
           </div>
         </div>
       </section>
 
       <section class="release" id="release" aria-labelledby="release-title">
         <div>
-          <p class="section-label">Open source preview</p>
-          <h2 id="release-title">Run it locally. Shape the next pass.</h2>
-          <p>
-            StillPoint is an early SwiftUI prototype. It is local-first, menu-bar-first, and designed to move toward Android after the macOS demo proves the loop.
-          </p>
+          <p class="section-label" data-en="Open source preview" data-zh="开源预览"></p>
+          <h2 id="release-title" data-en="Run it locally. Shape the next pass." data-zh="先在本地跑起来，再把它继续做对。"></h2>
+          <p
+            data-en="StillPoint is an early SwiftUI prototype. It is local-first, menu-bar-first, and designed to move toward Android after the macOS demo proves the loop."
+            data-zh="StillPoint 现在是早期 SwiftUI 原型：本地优先、菜单栏优先；当 macOS demo 验证闭环后，再迁移到 Android 的真实手机场景。"
+          ></p>
         </div>
         <div class="release-card">
           <a class="primary-action" href="https://github.com/chang-xinhai/StillPoint/releases">
             <span aria-hidden="true">●</span>
-            Download macOS
+            <span data-en="Download macOS" data-zh="下载 macOS"></span>
           </a>
-          <a class="secondary-action" href="https://github.com/chang-xinhai/StillPoint">View source</a>
+          <a class="secondary-action" href="https://github.com/chang-xinhai/StillPoint" data-en="View source" data-zh="查看源码"></a>
           <code>./script/build_and_run.sh --verify</code>
         </div>
       </section>
     </main>
+
+    <script>
+      (() => {
+        const button = document.querySelector("[data-language-toggle]");
+        const nodes = Array.from(document.querySelectorAll("[data-en][data-zh]"));
+        const stored = localStorage.getItem("stillpoint-language");
+        let language = stored || (navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en");
+
+        const applyLanguage = () => {
+          document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+          nodes.forEach((node) => {
+            node.textContent = node.dataset[language];
+          });
+          button.setAttribute("aria-label", language === "zh" ? "Switch to English" : "切换到中文");
+          button.querySelector("[data-lang-current]").textContent = language === "zh" ? "中" : "EN";
+          button.querySelector("[data-lang-next]").textContent = language === "zh" ? "EN" : "中";
+        };
+
+        button.addEventListener("click", () => {
+          language = language === "zh" ? "en" : "zh";
+          localStorage.setItem("stillpoint-language", language);
+          applyLanguage();
+        });
+
+        applyLanguage();
+      })();
+    </script>
   </body>
 </html>

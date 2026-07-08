@@ -1,3 +1,4 @@
+import StillPointCore
 import SwiftUI
 
 struct ContentView: View {
@@ -80,22 +81,8 @@ private struct ControlSidebar: View {
             }
 
             Section(model.t("Watched", "监控中")) {
-                ForEach(model.watchedApps.prefix(4)) { app in
-                    HStack(spacing: 10) {
-                        Image(systemName: app.isEnabled ? "checkmark.circle.fill" : "circle")
-                            .font(.callout)
-                            .foregroundStyle(app.isEnabled ? .green : .secondary)
-                            .frame(width: 18)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(app.displayName)
-                                .lineLimit(1)
-                            Text(app.isEnabled ? model.t("Active target", "已启用") : model.t("Ignored", "已忽略"))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-                    }
+                ForEach($model.watchedApps) { $app in
+                    SidebarWatchTargetRow(app: $app, language: model.language)
                 }
             }
         }
@@ -121,6 +108,27 @@ private struct ControlSidebar: View {
             .padding(.top, 8)
             .padding(.bottom, 12)
             .background(.bar)
+        }
+    }
+}
+
+private struct SidebarWatchTargetRow: View {
+    @Binding var app: WatchedApp
+    var language: AppLanguage
+
+    var body: some View {
+        HStack(spacing: 10) {
+            WatchStateButton(isEnabled: $app.isEnabled, language: language)
+                .controlSize(.small)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(app.displayName)
+                    .lineLimit(1)
+                Text(app.isEnabled ? language.text("Active target", "已启用") : language.text("Ignored", "已忽略"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
         }
     }
 }
