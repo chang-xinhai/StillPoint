@@ -255,7 +255,7 @@
         const button = document.querySelector("[data-language-toggle]");
         const nodes = Array.from(document.querySelectorAll("[data-en][data-zh]"));
         const stored = localStorage.getItem("stillpoint-language");
-        let language = stored || (navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en");
+        let language = stored === "zh" || stored === "en" ? stored : "en";
 
         const applyLanguage = () => {
           document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
