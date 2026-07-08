@@ -8,24 +8,32 @@ struct StillPointApp: App {
 
     var body: some Scene {
         WindowGroup("StillPoint", id: "control") {
-            ContentView(model: model)
+            ControlCenterScene(model: model)
                 .frame(width: 1120, height: 700)
         }
         .defaultSize(width: 1120, height: 700)
-
-        MenuBarExtra {
-            MenuBarView(model: model)
-        } label: {
-            Label(model.barTitle, systemImage: model.barSystemImage)
-                .symbolRenderingMode(.hierarchical)
-        }
-        .menuBarExtraStyle(.window)
 
         Settings {
             SettingsView(model: model)
                 .frame(width: 460)
                 .padding()
         }
+    }
+}
+
+private struct ControlCenterScene: View {
+    @ObservedObject var model: AppModel
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        ContentView(model: model)
+            .onAppear {
+                StatusItemController.shared.install(model: model)
+                StatusItemController.shared.setOpenControlCenterAction {
+                    openWindow(id: "control")
+                    NSApp.activate(ignoringOtherApps: true)
+                }
+            }
     }
 }
 
