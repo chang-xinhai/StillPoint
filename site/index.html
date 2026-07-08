@@ -6,218 +6,209 @@
     <meta name="color-scheme" content="light">
     <meta
       name="description"
-      content="StillPoint is a macOS menu bar attention guardian that protects the pause before doomscrolling takes over."
+      content="StillPoint is a small macOS menu bar app that asks for intent before a quick feed check becomes doomscrolling."
     >
-    <meta property="og:title" content="StillPoint - Protect the pause before the feed">
+    <meta property="og:title" content="StillPoint - A pause button for the feed">
     <meta
       property="og:description"
-      content="A tiny macOS menu bar app for noticing drift, choosing intent, and staying with deep work."
+      content="A menu bar attention guardian for macOS. Small by choice, private by design, open source."
     >
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/stillpoint-icon.png">
-    <meta name="theme-color" content="#f7f8f6">
-    <title>StillPoint - macOS menu bar attention guardian</title>
+    <meta name="theme-color" content="#f6f7fb">
+    <title>StillPoint - A pause button for the feed</title>
     <link rel="icon" href="assets/stillpoint-icon.png">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <header class="site-header" aria-label="Primary">
+    <header class="site-header" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="StillPoint home">
-        <img src="assets/stillpoint-icon.png" alt="" width="28" height="28">
+        <img src="assets/stillpoint-icon.png" alt="" width="32" height="32">
         <span>StillPoint</span>
       </a>
       <nav class="nav-links" aria-label="Sections">
-        <a href="#product">Product</a>
-        <a href="#receipt">Receipt</a>
-        <a href="#deep-work">Deep Work</a>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#release">Download</a>
         <a href="https://github.com/chang-xinhai/StillPoint">Source</a>
       </nav>
-      <a class="header-action" href="https://github.com/chang-xinhai/StillPoint">Download preview</a>
+      <a class="download-pill" href="https://github.com/chang-xinhai/StillPoint/releases">
+        <span aria-hidden="true">●</span>
+        Download macOS
+      </a>
     </header>
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <h1 id="hero-title">StillPoint</h1>
-          <p class="hero-statement">Protect the pause before the feed.</p>
-          <p class="hero-body">
-            A tiny macOS menu bar attention guardian. StillPoint lets quick, intentional visits pass, then asks for one deliberate choice when a feed starts turning into drift.
-          </p>
-          <div class="hero-actions" aria-label="Download and source options">
-            <a class="primary-action" href="https://github.com/chang-xinhai/StillPoint">Download preview</a>
-            <a class="secondary-action" href="https://github.com/chang-xinhai/StillPoint">View source</a>
+        <div class="device-stage">
+          <div class="stage-glass" aria-hidden="true"></div>
+          <div class="stage-menu">
+            <div class="menu-left">
+              <span class="traffic traffic-red"></span>
+              <span class="traffic traffic-yellow"></span>
+              <span class="traffic traffic-green"></span>
+              <strong>StillPoint</strong>
+              <span>Focus</span>
+              <span>Receipt</span>
+            </div>
+            <div class="menu-right" aria-label="macOS menu bar with StillPoint status item">
+              <span class="status-dot">
+                <img src="assets/stillpoint-icon.png" alt="" width="17" height="17">
+              </span>
+              <span>Wed 9:41 AM</span>
+            </div>
           </div>
-          <div class="install-line" aria-label="Run from source">
-            <span>Run from source</span>
-            <code>./script/build_and_run.sh --verify</code>
-          </div>
-        </div>
 
-        <div class="hero-visual" aria-label="StillPoint running from the macOS menu bar">
-          <div class="desktop-frame">
-            <div class="menu-bar" role="img" aria-label="macOS menu bar with StillPoint status item">
-              <div class="menu-left">
-                <span class="apple-mark" aria-hidden="true"></span>
+          <div class="hero-copy">
+            <p class="kicker">Menu bar attention guardian · macOS</p>
+            <h1 id="hero-title">
+              <span>A pause</span>
+              <span>button</span>
+              <span>for the feed.</span>
+            </h1>
+            <p class="hero-body">
+              StillPoint lives in your menu bar and asks for intent before a quick check becomes doomscrolling.
+            </p>
+            <div class="hero-actions" aria-label="Download and source options">
+              <a class="primary-action" href="https://github.com/chang-xinhai/StillPoint/releases">
+                <span aria-hidden="true">●</span>
+                Download macOS
+              </a>
+              <button class="command-copy" type="button" aria-label="Install from source command">
+                <span>$</span>
+                <code>git clone github.com/chang-xinhai/StillPoint</code>
+              </button>
+            </div>
+            <ul class="trust-list" aria-label="StillPoint principles">
+              <li>Private by design</li>
+              <li>Open source</li>
+              <li>Small by choice</li>
+            </ul>
+          </div>
+
+          <div class="product-shot" aria-label="StillPoint menu bar popover mockup">
+            <div class="popover-notch" aria-hidden="true"></div>
+            <div class="popover-top">
+              <img src="assets/stillpoint-icon.png" alt="" width="42" height="42">
+              <div>
                 <strong>StillPoint</strong>
-                <span>Focus</span>
-                <span>Receipt</span>
-              </div>
-              <div class="menu-right">
-                <span class="status-item active">
-                  <img src="assets/stillpoint-icon.png" alt="" width="16" height="16">
-                  Pause ready
-                </span>
-                <span>Wed 9:41 AM</span>
+                <span>Active</span>
               </div>
             </div>
 
-            <div class="wallpaper">
-              <div class="dock-note">
-                <span>No Dock icon</span>
-                <strong>Lives where drift starts: the menu bar.</strong>
+            <div class="panel-rule"></div>
+
+            <div class="gate-row">
+              <p>Current gate</p>
+              <strong>Douyin</strong>
+              <span>0s / 8s</span>
+              <div class="meter" aria-hidden="true"><i></i><b></b></div>
+              <small>com.ss.iphone.ugc.Aweme</small>
+            </div>
+
+            <div class="panel-rule"></div>
+
+            <div class="receipt-grid">
+              <div>
+                <span>Checks</span>
+                <strong>4</strong>
               </div>
-
-              <div class="popover" aria-label="StillPoint popover">
-                <div class="popover-notch" aria-hidden="true"></div>
-                <div class="popover-head">
-                  <img src="assets/stillpoint-icon.png" alt="" width="40" height="40">
-                  <div>
-                    <p class="caption">StillPoint</p>
-                    <h2>Douyin has been open for 1m 30s.</h2>
-                  </div>
-                  <span class="state-dot" aria-label="Grace window expired"></span>
-                </div>
-
-                <div class="intent-panel">
-                  <p>Are you still here for the reason you came?</p>
-                  <div class="timer-row">
-                    <span>Grace window</span>
-                    <strong>expired</strong>
-                  </div>
-                  <div class="progress-track" aria-hidden="true">
-                    <span></span>
-                  </div>
-                </div>
-
-                <div class="choice-list" aria-label="Intent choices">
-                  <button type="button">
-                    <span class="choice-icon lookup" aria-hidden="true"></span>
-                    <span>Looking something up</span>
-                    <strong>3 min</strong>
-                  </button>
-                  <button type="button">
-                    <span class="choice-icon break" aria-hidden="true"></span>
-                    <span>Intentional break</span>
-                    <strong>5 min</strong>
-                  </button>
-                  <button type="button" class="quiet-choice">
-                    <span class="choice-icon drift" aria-hidden="true"></span>
-                    <span>I drifted</span>
-                    <strong>close it</strong>
-                  </button>
-                </div>
-
-                <div class="receipt-strip" aria-label="Daily attention receipt preview">
-                  <div>
-                    <span>Today</span>
-                    <strong>23 min protected</strong>
-                  </div>
-                  <div>
-                    <span>Passes</span>
-                    <strong>2</strong>
-                  </div>
-                  <div>
-                    <span>Closes</span>
-                    <strong>4</strong>
-                  </div>
-                </div>
+              <div>
+                <span>Closed</span>
+                <strong>2</strong>
               </div>
+              <div>
+                <span>Protected</span>
+                <strong>23m</strong>
+              </div>
+            </div>
+
+            <div class="panel-rule"></div>
+
+            <div class="menu-actions" aria-label="StillPoint actions">
+              <button type="button">
+                <span class="action-icon">□</span>
+                <span>Open Control Center</span>
+                <em>⌘ O</em>
+              </button>
+              <button type="button">
+                <span class="action-icon">Ⅱ</span>
+                <span>Pause watching</span>
+                <em>⌘ P</em>
+              </button>
+              <button type="button">
+                <span class="action-icon">×</span>
+                <span>Quit StillPoint</span>
+                <em>⌘ Q</em>
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="product-story" id="product" aria-labelledby="product-title">
-        <div class="section-copy">
-          <h2 id="product-title">A checkpoint, not a scold.</h2>
+      <section class="feature-strip" id="features" aria-labelledby="features-title">
+        <div>
+          <p class="section-label">Why it exists</p>
+          <h2 id="features-title">Not another blocker. A checkpoint.</h2>
+        </div>
+        <div class="feature-list">
+          <article>
+            <h3>Grace first</h3>
+            <p>Quick, purposeful visits stay uninterrupted.</p>
+          </article>
+          <article>
+            <h3>Intent before drift</h3>
+            <p>When a feed starts pulling, StillPoint asks for one deliberate choice.</p>
+          </article>
+          <article>
+            <h3>Daily receipt</h3>
+            <p>Review protected time once, without per-exit nagging.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="workflow" id="how" aria-labelledby="how-title">
+        <div class="workflow-copy">
+          <p class="section-label">How it works</p>
+          <h2 id="how-title">A small loop for the moments between tasks.</h2>
           <p>
-            StillPoint is designed for the fragile minute after you open a distracting app for a legitimate reason. It waits, notices sustained use, and turns autopilot back into a small decision.
+            StillPoint watches selected apps, keeps a short grace window, and switches to a stronger gate during Deep Work Lock.
           </p>
         </div>
-        <div class="behavior-list" aria-label="StillPoint behavior">
-          <article>
+        <div class="workflow-steps">
+          <div>
             <span>01</span>
-            <h3>Grace window</h3>
-            <p>Short, useful visits continue without interruption.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Purpose pass</h3>
-            <p>Continue with a bounded reason instead of an open-ended feed.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Friction ladder</h3>
-            <p>Repeated drift asks for clearer intent, calmly and without shame.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="split-section" id="receipt" aria-labelledby="receipt-title">
-        <div class="receipt-card" aria-label="Attention receipt mockup">
-          <div class="receipt-header">
-            <span>Daily Attention Receipt</span>
-            <strong>Jul 8</strong>
+            <strong>Watch explicit targets</strong>
+            <p>Douyin, Bilibili, Xiaohongshu, or any app you add later.</p>
           </div>
-          <p>StillPoint caught 4 possible drifts. You closed Douyin twice, used 2 purpose passes, and protected about 23 minutes of deep work.</p>
-          <dl>
-            <div>
-              <dt>Most likely drift</dt>
-              <dd>Waiting on agent output</dd>
-            </div>
-            <div>
-              <dt>Protected window</dt>
-              <dd>3:10 PM - 3:33 PM</dd>
-            </div>
-            <div>
-              <dt>Stored</dt>
-              <dd>Local to your Mac</dd>
-            </div>
-          </dl>
-        </div>
-        <div class="section-copy">
-          <h2 id="receipt-title">Review the pattern once, then move on.</h2>
-          <p>
-            The receipt is a quiet end-of-day summary of protected time and drift patterns. It helps you notice context without turning attention into a shame scoreboard.
-          </p>
+          <div>
+            <span>02</span>
+            <strong>Ask for intent</strong>
+            <p>Looking something up, taking a break, or closing the drift.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Protect the gap</strong>
+            <p>Deep Work Lock covers build waits, agent waits, and context switches.</p>
+          </div>
         </div>
       </section>
 
-      <section class="deep-work" id="deep-work" aria-labelledby="deep-work-title">
-        <div class="section-copy">
-          <h2 id="deep-work-title">Built for the moments between tasks.</h2>
+      <section class="release" id="release" aria-labelledby="release-title">
+        <div>
+          <p class="section-label">Open source preview</p>
+          <h2 id="release-title">Run it locally. Shape the next pass.</h2>
           <p>
-            Deep Work Lock covers the gaps: waiting for a build, a test, or an AI agent, when opening a feed is almost too easy.
+            StillPoint is an early SwiftUI prototype. It is local-first, menu-bar-first, and designed to move toward Android after the macOS demo proves the loop.
           </p>
         </div>
-        <div class="lock-panel" aria-label="Deep Work Lock durations">
-          <span>25 min</span>
-          <span>45 min</span>
-          <span>90 min</span>
-          <strong>stronger pause</strong>
-        </div>
-      </section>
-
-      <section class="release-section" aria-labelledby="release-title">
-        <div class="release-copy">
-          <h2 id="release-title">Open-source macOS preview.</h2>
-          <p>
-            StillPoint is early, local-first, and built in SwiftUI. Clone it, run the preview, and help shape a calmer attention tool for the menu bar.
-          </p>
-        </div>
-        <div class="release-actions" aria-label="Project links">
-          <a class="primary-action" href="https://github.com/chang-xinhai/StillPoint">Open GitHub repo</a>
-          <code>git clone git@github.com:chang-xinhai/StillPoint.git</code>
+        <div class="release-card">
+          <a class="primary-action" href="https://github.com/chang-xinhai/StillPoint/releases">
+            <span aria-hidden="true">●</span>
+            Download macOS
+          </a>
+          <a class="secondary-action" href="https://github.com/chang-xinhai/StillPoint">View source</a>
+          <code>./script/build_and_run.sh --verify</code>
         </div>
       </section>
     </main>
