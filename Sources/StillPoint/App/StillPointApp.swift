@@ -7,17 +7,19 @@ struct StillPointApp: App {
     @StateObject private var model = AppModel()
 
     var body: some Scene {
-        WindowGroup("StillPoint", id: "main") {
+        WindowGroup("StillPoint", id: "control") {
             ContentView(model: model)
-                .frame(minWidth: 980, minHeight: 660)
-                .onAppear {
-                    model.startMonitoring()
-                }
+                .frame(width: 980, height: 660)
         }
+        .defaultSize(width: 980, height: 660)
 
-        MenuBarExtra("StillPoint", systemImage: "pause.circle") {
+        MenuBarExtra {
             MenuBarView(model: model)
+        } label: {
+            Label(model.barTitle, systemImage: model.barSystemImage)
+                .symbolRenderingMode(.hierarchical)
         }
+        .menuBarExtraStyle(.window)
 
         Settings {
             SettingsView(model: model)
@@ -29,10 +31,13 @@ struct StillPointApp: App {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.regular)
-        DispatchQueue.main.async {
+        NSApp.setActivationPolicy(.accessory)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             NSApp.activate(ignoringOtherApps: true)
         }
     }
-}
 
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
+    }
+}

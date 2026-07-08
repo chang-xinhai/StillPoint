@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta
+      name="description"
+      content="StillPoint is a calm macOS menu bar checkpoint that protects the pause before the feed."
+    >
+    <title>StillPoint — Protect the pause before the feed</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header" aria-label="Primary">
+      <a class="brand" href="#top" aria-label="StillPoint home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>StillPoint</span>
+      </a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#pause">Pause</a>
+        <a href="#receipt">Receipt</a>
+        <a href="#deep-work">Deep Work</a>
+      </nav>
+      <a class="header-action" href="#download">macOS preview</a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 id="hero-title">StillPoint</h1>
+          <p class="hero-statement">Protect the pause before the feed.</p>
+          <p class="hero-body">
+            A small macOS menu bar companion that notices when purposeful use starts to drift, then asks for one deliberate choice before the feed takes over.
+          </p>
+          <div class="hero-actions" id="download" aria-label="Download options">
+            <a class="primary-action" href="#pause">See the pause</a>
+            <code>./script/build_and_run.sh</code>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="StillPoint menu bar popover mockup">
+          <div class="desktop-frame">
+            <div class="menu-bar" role="img" aria-label="macOS menu bar with StillPoint status item">
+              <div class="menu-left">
+                <span class="apple-dot" aria-hidden="true"></span>
+                <strong>StillPoint</strong>
+                <span>Focus</span>
+                <span>Receipt</span>
+              </div>
+              <div class="menu-right">
+                <span class="status-item active">
+                  <span class="status-glyph" aria-hidden="true"></span>
+                  Pause ready
+                </span>
+                <span>Wed 9:41 AM</span>
+              </div>
+            </div>
+
+            <div class="wallpaper">
+              <div class="popover" aria-label="StillPoint popover">
+                <div class="popover-notch" aria-hidden="true"></div>
+                <div class="popover-head">
+                  <div>
+                    <p class="caption">StillPoint</p>
+                    <h2>Douyin has been open for 1m 30s.</h2>
+                  </div>
+                  <span class="state-dot" aria-label="Grace window expired"></span>
+                </div>
+
+                <div class="intent-panel">
+                  <p>Are you still here for the reason you came?</p>
+                  <div class="timer-row">
+                    <span>Grace window</span>
+                    <strong>expired</strong>
+                  </div>
+                  <div class="progress-track" aria-hidden="true">
+                    <span></span>
+                  </div>
+                </div>
+
+                <div class="choice-list" aria-label="Intent choices">
+                  <button type="button">
+                    <span class="choice-icon lookup" aria-hidden="true"></span>
+                    Looking something up
+                    <strong>3 min</strong>
+                  </button>
+                  <button type="button">
+                    <span class="choice-icon break" aria-hidden="true"></span>
+                    Intentional break
+                    <strong>5 min</strong>
+                  </button>
+                  <button type="button" class="quiet-choice">
+                    <span class="choice-icon drift" aria-hidden="true"></span>
+                    I drifted
+                    <strong>close it</strong>
+                  </button>
+                </div>
+
+                <div class="receipt-strip" aria-label="Daily attention receipt preview">
+                  <div>
+                    <span>Today</span>
+                    <strong>23 min protected</strong>
+                  </div>
+                  <div>
+                    <span>Passes</span>
+                    <strong>2</strong>
+                  </div>
+                  <div>
+                    <span>Closes</span>
+                    <strong>4</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="principle-band" id="pause" aria-labelledby="pause-title">
+        <div class="section-copy">
+          <h2 id="pause-title">Not a blocker. A checkpoint.</h2>
+          <p>
+            StillPoint gives useful browsing a short grace window, then adds just enough friction to turn automatic scrolling back into an intentional decision.
+          </p>
+        </div>
+        <div class="feature-rail" aria-label="StillPoint behavior">
+          <article>
+            <span>01</span>
+            <h3>Grace Window</h3>
+            <p>Let quick, legitimate visits pass without interruption.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Purpose Pass</h3>
+            <p>Continue with a bounded reason instead of an open-ended feed.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Friction Ladder</h3>
+            <p>Repeated drift asks for clearer intent, calmly and without shame.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="split-section" id="receipt" aria-labelledby="receipt-title">
+        <div class="receipt-card" aria-label="Attention receipt mockup">
+          <div class="receipt-header">
+            <span>Daily Attention Receipt</span>
+            <strong>Jul 8</strong>
+          </div>
+          <p>StillPoint caught 4 possible drifts. You closed Douyin twice, used 2 purpose passes, and protected about 23 minutes of deep work.</p>
+          <dl>
+            <div>
+              <dt>Most likely drift</dt>
+              <dd>Waiting on agent output</dd>
+            </div>
+            <div>
+              <dt>Protected window</dt>
+              <dd>3:10 PM - 3:33 PM</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="section-copy">
+          <h2 id="receipt-title">Review once a day, not every time you leave.</h2>
+          <p>
+            The receipt is a quiet summary of protected time and drift patterns. It helps users notice context without turning attention into a shame scoreboard.
+          </p>
+        </div>
+      </section>
+
+      <section class="deep-work" id="deep-work" aria-labelledby="deep-work-title">
+        <div class="section-copy">
+          <h2 id="deep-work-title">Built for the moments between tasks.</h2>
+          <p>
+            Deep Work Lock covers the fragile gaps: waiting for a build, a test, or an AI agent, when opening a feed is almost too easy.
+          </p>
+        </div>
+        <div class="lock-row" aria-label="Deep Work Lock durations">
+          <span>25 min</span>
+          <span>45 min</span>
+          <span>90 min</span>
+          <strong>stronger pause</strong>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

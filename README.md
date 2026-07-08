@@ -2,13 +2,14 @@
 
 Protect the pause before the feed.
 
-StillPoint is a macOS-first attention interruption prototype for detecting
+StillPoint is a macOS-first menu bar attention interruption prototype for detecting
 unconscious app use and creating a deliberate pause before the user falls into
 doomscrolling.
 
 ## Prototype Direction
 
 - Start on macOS for fast, real-device validation.
+- Live primarily in the menu bar, not as a full-time dashboard.
 - Watch selected foreground apps and browser contexts.
 - Trigger a full-screen pause after sustained unintentional use.
 - Ask the user to state intent before continuing.
@@ -32,6 +33,11 @@ The exam demo should prove the core loop:
 ./script/build_and_run.sh
 ```
 
+StillPoint launches as a menu bar agent with no Dock icon and a glass Control
+Center window for demos. Close the window anytime; the menu bar agent keeps
+watching. Use the menu bar item to start Deep Work Lock, trigger the demo, or
+reopen Control Center.
+
 For a launch check:
 
 ```bash
@@ -41,9 +47,11 @@ For a launch check:
 ## Demo Script
 
 1. Open StillPoint with Demo Mode enabled.
-2. Click `Simulate drift`.
-3. Show the full-screen StillPoint intervention.
-4. Choose `Looking something up` to grant a bounded pass.
-5. Run the simulation again and choose `I drifted`.
-6. Open `Daily Receipt` to show the daily summary.
-7. Start `Deep Work Lock` to show the stricter coding-session guard.
+2. Show the glass Control Center with the live frontmost app.
+3. Click `Simulate drift`.
+4. Show the full-screen StillPoint intervention.
+5. Choose `Looking something up` to grant a bounded pass.
+6. Run the simulation again and choose `I drifted`.
+7. Open `Daily Receipt`.
+8. Close the window and show StillPoint still running in the menu bar.
+9. Start `Work Lock` from the menu bar panel.

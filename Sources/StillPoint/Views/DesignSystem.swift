@@ -32,12 +32,17 @@ struct SurfaceCard<Content: View>: View {
         }
         .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .topLeading)
         .padding(18)
-        .background(Color(nsColor: .textBackgroundColor).opacity(0.78), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(.primary.opacity(0.075), lineWidth: 1)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(.regularMaterial)
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.56))
         }
-        .shadow(color: .black.opacity(0.055), radius: 18, x: 0, y: 10)
+        .overlay {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(.primary.opacity(0.08), lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.08), radius: 24, x: 0, y: 14)
     }
 }
 
@@ -153,5 +158,24 @@ struct IconRoundel: View {
             .foregroundStyle(tint)
             .frame(width: 34, height: 34)
             .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+struct AppMark: View {
+    var size: CGFloat
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: size * 0.24, style: .continuous)
+                .fill(.blue.gradient)
+            Circle()
+                .stroke(.white.opacity(0.9), lineWidth: max(2, size * 0.08))
+                .padding(size * 0.22)
+            Circle()
+                .fill(.white)
+                .frame(width: size * 0.14, height: size * 0.14)
+        }
+        .frame(width: size, height: size)
+        .shadow(color: .blue.opacity(0.22), radius: size * 0.22, x: 0, y: size * 0.10)
     }
 }

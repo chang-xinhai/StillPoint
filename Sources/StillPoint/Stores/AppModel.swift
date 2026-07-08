@@ -23,6 +23,12 @@ final class AppModel: ObservableObject {
     private var currentOffendingApp: NSRunningApplication?
     private let presenter = OverlayInterventionPresenter()
 
+    init() {
+        DispatchQueue.main.async { [weak self] in
+            self?.startMonitoring()
+        }
+    }
+
     var focusLockActive: Bool {
         guard let focusLockUntil else { return false }
         return focusLockUntil > Date()
@@ -79,6 +85,26 @@ final class AppModel: ObservableObject {
 
     var watchStateLabel: String {
         monitoringEnabled ? "Watching" : "Paused"
+    }
+
+    var barSystemImage: String {
+        if focusLockActive {
+            return "lock.shield.fill"
+        }
+
+        return monitoringEnabled ? "pause.circle.fill" : "pause.circle"
+    }
+
+    var barTitle: String {
+        if focusLockActive {
+            return "Lock \(focusLockRemaining.shortDurationString)"
+        }
+
+        if activeElapsed > 0 {
+            return "Still \(activeElapsed.shortDurationString)"
+        }
+
+        return monitoringEnabled ? "Still" : "Paused"
     }
 
     func startMonitoring() {

@@ -4,13 +4,13 @@ StillPoint agent working rules.
 
 ## Project
 
-**StillPoint** is a macOS-first attention intervention prototype.
+**StillPoint** is a macOS-first menu bar attention intervention prototype.
 
 Core idea:
 
 > Do not block every use. Detect when purposeful use drifts into unconscious feed consumption, then create a calm but firm pause.
 
-MVP platform: macOS SwiftUI / AppKit via Swift Package Manager.  
+MVP platform: macOS SwiftUI / AppKit menu bar app via Swift Package Manager.
 Next platform: Android, using usage stats, accessibility, and overlay APIs.
 
 ## Product Rules
@@ -39,6 +39,7 @@ Next platform: Android, using usage stats, accessibility, and overlay APIs.
 ## UI Rules
 
 - StillPoint should feel small, calm, and premium, closer to ScreenZen / Opal than a generic admin dashboard.
+- StillPoint is menu-bar-first. The main window is a secondary Control Center, not the primary product surface.
 - Prefer native macOS sidebar-detail structure, system colors, semantic foreground styles, subtle borders, and light shadows.
 - Keep cards sparse and purposeful. Do not nest cards or fill the app with heavy gray panels.
 - Use clear icon buttons or icon-led controls for primary actions; add help text where the action is not obvious.

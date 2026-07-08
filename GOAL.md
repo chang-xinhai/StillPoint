@@ -2,7 +2,7 @@
 
 Current objective:
 
-> Deliver a runnable macOS StillPoint demo that detects monitored app drift, interrupts with a full-screen choice, supports Deep Work Lock, and summarizes the day with a Daily Attention Receipt.
+> Deliver a runnable macOS menu bar StillPoint demo that detects monitored app drift, interrupts with a full-screen choice, supports Deep Work Lock, and summarizes the day with a Daily Attention Receipt.
 
 This file is the project-level trace for Codex `/goal` mode and human review.
 Update the status when a phase is genuinely implemented and verified.
@@ -117,6 +117,24 @@ Acceptance:
 - README includes demo steps.
 - GitHub `main` is pushed.
 
+## Phase 6.5: Menu Bar Product Shape
+
+Status: Done
+
+Goal:
+
+- Make StillPoint feel like a resident macOS utility rather than a generic dashboard app.
+
+Acceptance:
+
+- App launches as `LSUIElement=true` with no Dock icon.
+- App can show a glass Control Center for demos.
+- Closing Control Center leaves the menu bar agent running.
+- Menu bar item exposes concise status text like `Still`, `Paused`, or `Lock 59s`.
+- Menu bar popover exposes current state, progress, today's receipt preview, demo trigger, monitoring pause/resume, and Deep Work Lock.
+- Control Center remains available on demand.
+- `./script/test.sh` and `./script/build_and_run.sh --verify` pass.
+
 ## Phase 7: Android Migration Plan
 
 Status: Not started
@@ -134,9 +152,11 @@ Acceptance:
 ## Current Demo Script
 
 1. Open StillPoint.
-2. Keep Demo Mode on.
-3. Click `Simulate Douyin drift`.
-4. Show the full-screen intervention.
-5. Choose `I drifted · Close it` or `Looking something up · 3 min`.
-6. Open `Daily Receipt` and show the aggregated result.
-7. Start `Deep Work Lock` and explain the stricter threshold.
+2. Show the glass Control Center and the live frontmost app.
+3. Keep Demo Mode on.
+4. Click `Simulate drift`.
+5. Show the full-screen intervention.
+6. Choose `I drifted · Close it` or `Looking something up`.
+7. Open `Daily Receipt` and show the aggregated result.
+8. Close Control Center and show StillPoint continues in the menu bar.
+9. Start `Work Lock` from the menu bar and explain the stricter threshold.
