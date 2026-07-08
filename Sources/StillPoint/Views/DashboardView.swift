@@ -116,7 +116,7 @@ private struct IntentCheckpointPanel: View {
                     .buttonStyle(.borderedProminent)
 
                     Button {
-                        model.startFocusLock(minutes: model.demoMode ? 1 : 25)
+                        model.startFocusLock(minutes: 25)
                     } label: {
                         Label(model.focusLockActive ? "Extend lock" : "Start work lock", systemImage: "lock.shield")
                     }

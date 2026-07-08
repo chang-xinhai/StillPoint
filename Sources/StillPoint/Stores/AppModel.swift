@@ -161,6 +161,7 @@ final class AppModel: ObservableObject {
 
     func runningAppCandidates() -> [RunningAppCandidate] {
         var seen = Set<String>()
+        let foregroundApp = currentForegroundApplication()
 
         return NSWorkspace.shared.runningApplications.compactMap { app in
             guard app.activationPolicy == .regular else { return nil }
@@ -175,7 +176,7 @@ final class AppModel: ObservableObject {
                 displayName: name,
                 bundleIdentifier: bundleIdentifier,
                 bundleURL: app.bundleURL,
-                isFrontmost: app == NSWorkspace.shared.frontmostApplication
+                isFrontmost: app == foregroundApp
             )
             guard seen.insert(candidate.id).inserted else { return nil }
 
@@ -304,7 +305,7 @@ final class AppModel: ObservableObject {
             statusMessage = t("Deep Work Lock finished.", "专注锁已结束。")
         }
 
-        guard let app = NSWorkspace.shared.frontmostApplication else {
+        guard let app = currentForegroundApplication() else {
             resetActiveCandidate(clearDisplay: true)
             return
         }
@@ -376,6 +377,56 @@ final class AppModel: ObservableObject {
         presentIntervention(context: context, offendingApp: app)
     }
 
+    private func currentForegroundApplication() -> NSRunningApplication? {
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else { return nil }
+        let frontmostName = frontmostApp.localizedName ?? ""
+        let frontmostBundleIdentifier = frontmostApp.bundleIdentifier ?? ""
+
+        if isControlApp(appName: frontmostName, bundleIdentifier: frontmostBundleIdentifier) {
+            return frontmostApp
+        }
+
+        let visiblePIDs = visibleWindowOwnerPIDsInFrontToBackOrder()
+        if visiblePIDs.contains(frontmostApp.processIdentifier) {
+            return frontmostApp
+        }
+
+        for pid in visiblePIDs {
+            guard let app = NSRunningApplication(processIdentifier: pid),
+                  app.activationPolicy == .regular
+            else { continue }
+
+            return app
+        }
+
+        return nil
+    }
+
+    private func visibleWindowOwnerPIDsInFrontToBackOrder() -> [pid_t] {
+        let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
+        guard let windowInfos = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            return []
+        }
+
+        var seen = Set<pid_t>()
+        return windowInfos.compactMap { info in
+            guard let layer = info[kCGWindowLayer as String] as? NSNumber, layer.intValue == 0,
+                  let ownerPID = info[kCGWindowOwnerPID as String] as? NSNumber,
+                  let bounds = info[kCGWindowBounds as String] as? NSDictionary,
+                  let rect = CGRect(dictionaryRepresentation: bounds),
+                  rect.width > 24,
+                  rect.height > 24
+            else {
+                return nil
+            }
+
+            let pid = pid_t(ownerPID.int32Value)
+            guard seen.insert(pid).inserted else { return nil }
+
+            return pid
+        }
+    }
+
     private func presentIntervention(context: InterventionContext, offendingApp: NSRunningApplication?) {
         currentContext = context
         currentOffendingApp = offendingApp
@@ -400,23 +451,32 @@ final class AppModel: ObservableObject {
 
         switch action {
         case .purposePass:
-            grantedSeconds = demoMode ? 20 : 180
+            grantedSeconds = max(activeGateSeconds, 2 * 60)
             purposePassUntilByKey[key] = now.addingTimeInterval(grantedSeconds)
-            statusMessage = "Purpose pass granted for \(context.appName): \(grantedSeconds.shortDurationString)."
+            statusMessage = t(
+                "Purpose pass granted for \(context.appName): \(grantedSeconds.shortDurationString).",
+                "\(context.appName) 已获得查找通行：\(grantedSeconds.shortDurationString)。"
+            )
         case .intentionalBreak:
-            grantedSeconds = demoMode ? 30 : 300
+            grantedSeconds = max(activeGateSeconds, 5 * 60)
             purposePassUntilByKey[key] = now.addingTimeInterval(grantedSeconds)
-            statusMessage = "Intentional break granted for \(context.appName): \(grantedSeconds.shortDurationString)."
+            statusMessage = t(
+                "Intentional break granted for \(context.appName): \(grantedSeconds.shortDurationString).",
+                "\(context.appName) 已获得有意休息：\(grantedSeconds.shortDurationString)。"
+            )
         case .closeApp:
-            protectedSeconds = demoMode ? 120 : 600
+            protectedSeconds = max(activeGateSeconds, 10 * 60)
             hideOffendingApp()
-            statusMessage = "Closed a drift in \(context.appName)."
+            statusMessage = t("Closed a drift in \(context.appName).", "已中断 \(context.appName) 的走神。")
         case .startLock:
-            grantedSeconds = demoMode ? 60 : 25 * 60
+            grantedSeconds = 25 * 60
             protectedSeconds = grantedSeconds
             focusLockUntil = now.addingTimeInterval(grantedSeconds)
             hideOffendingApp()
-            statusMessage = "Deep Work Lock started for \(grantedSeconds.shortDurationString)."
+            statusMessage = t(
+                "Deep Work Lock started for \(grantedSeconds.shortDurationString).",
+                "专注锁已开启 \(grantedSeconds.shortDurationString)。"
+            )
         }
 
         attentionEvents.append(
@@ -455,6 +515,7 @@ final class AppModel: ObservableObject {
         activeKey = nil
         activeStartedAt = nil
         activeElapsed = 0
+        activeGateSeconds = WatchedApp.defaultGateSeconds
         currentOffendingApp = nil
 
         if clearDisplay {
@@ -494,7 +555,10 @@ final class AppModel: ObservableObject {
     private func addWatchedApp(applicationName: String, bundleIdentifier: String, detail: String) {
         if let index = indexOfWatchedTarget(applicationName: applicationName, bundleIdentifier: bundleIdentifier) {
             watchedApps[index].isEnabled = true
-            statusMessage = "\(watchedApps[index].displayName) is already on the watch list."
+            statusMessage = t(
+                "\(watchedApps[index].displayName) is already on the watch list.",
+                "\(watchedApps[index].displayName) 已经在监控列表中。"
+            )
             return
         }
 
@@ -505,7 +569,10 @@ final class AppModel: ObservableObject {
             isEnabled: true
         )
         watchedApps.append(app)
-        statusMessage = "\(app.displayName) added to Watch List."
+        statusMessage = t(
+            "\(app.displayName) added to Watch List.",
+            "\(app.displayName) 已添加到监控列表。"
+        )
     }
 
     private func indexOfWatchedTarget(applicationName: String, bundleIdentifier: String) -> Int? {
@@ -532,15 +599,18 @@ final class AppModel: ObservableObject {
         return decoded
     }
 
+    private static func loadLanguage(from userDefaults: UserDefaults) -> AppLanguage {
+        guard let rawValue = userDefaults.string(forKey: languageKey),
+              let language = AppLanguage(rawValue: rawValue)
+        else {
+            return .chinese
+        }
+
+        return language
+    }
+
     private func saveWatchedApps() {
         guard let data = try? JSONEncoder().encode(watchedApps) else { return }
         userDefaults.set(data, forKey: Self.watchedAppsKey)
-    }
-
-    private func triggerThreshold() -> TimeInterval {
-        if focusLockActive {
-            return demoMode ? 4 : 10
-        }
-        return demoMode ? 8 : 90
     }
 }

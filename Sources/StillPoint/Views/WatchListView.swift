@@ -10,14 +10,17 @@ struct WatchListView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 WorkspaceHeader(
-                    eyebrow: "Targets",
-                    title: "Watch List",
-                    subtitle: "Explicit high-risk feeds only. Work tools stay out of the net by default."
+                    eyebrow: model.t("Targets", "目标"),
+                    title: model.t("Watch List", "监控列表"),
+                    subtitle: model.t(
+                        "Explicit high-risk feeds only. Work tools stay out of the net by default.",
+                        "只监控明确高风险的信息流。工作工具默认不进入拦截网。"
+                    )
                 ) {
                     Button {
                         isAddingTarget = true
                     } label: {
-                        Label("Add target", systemImage: "plus")
+                        Label(model.t("Add target", "添加目标"), systemImage: "plus")
                     }
                     .buttonStyle(.borderedProminent)
                     .keyboardShortcut("n", modifiers: [.command])
@@ -26,16 +29,16 @@ struct WatchListView: View {
                 PlainPanel {
                     VStack(spacing: 0) {
                         HStack {
-                            SectionKicker("Explicit targets", systemImage: "eye")
+                            SectionKicker(model.t("Explicit targets", "明确目标"), systemImage: "eye")
                             Spacer()
-                            Text("\(model.enabledWatchCount) enabled")
+                            Text(model.t("\(model.enabledWatchCount) enabled", "已启用 \(model.enabledWatchCount) 个"))
                                 .font(.caption.monospacedDigit())
                                 .foregroundStyle(.secondary)
                         }
                         .padding(.bottom, 10)
 
                         ForEach($model.watchedApps) { $app in
-                            WatchTargetRow(app: $app) {
+                            WatchTargetRow(app: $app, language: model.language) {
                                 model.removeWatchedApp(app)
                             }
                             if app.id != model.watchedApps.last?.id {
@@ -49,11 +52,14 @@ struct WatchListView: View {
                         HStack(spacing: 10) {
                             Image(systemName: "info.circle")
                                 .foregroundStyle(.secondary)
-                            Text("StillPoint only gates enabled targets. Add work apps manually only when you truly want them blocked.")
+                            Text(model.t(
+                                "StillPoint only gates enabled targets. Add work apps manually only when you truly want them blocked.",
+                                "StillPoint 只拦截已启用目标。只有当你真的想限制某个工作应用时，才手动添加它。"
+                            ))
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                             Spacer()
-                            Button("Restore defaults") {
+                            Button(model.t("Restore defaults", "恢复默认")) {
                                 model.restoreDefaultWatchedApps()
                             }
                             .buttonStyle(.link)
@@ -74,6 +80,7 @@ struct WatchListView: View {
 
 private struct WatchTargetRow: View {
     @Binding var app: WatchedApp
+    var language: AppLanguage
     var remove: () -> Void
 
     var body: some View {
@@ -97,6 +104,22 @@ private struct WatchTargetRow: View {
                     .font(.caption.monospaced())
                     .foregroundStyle(.tertiary)
                     .lineLimit(1)
+
+                HStack(spacing: 10) {
+                    Text(language.text("Gate", "阈值"))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+                    Slider(
+                        value: $app.gateSeconds,
+                        in: WatchedApp.minimumGateSeconds...WatchedApp.maximumGateSeconds,
+                        step: WatchedApp.gateStepSeconds
+                    )
+                    .frame(maxWidth: 220)
+                    Text(app.gateSeconds.shortDurationString)
+                        .font(.caption.monospacedDigit().weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 48, alignment: .trailing)
+                }
             }
 
             Spacer()
@@ -112,7 +135,7 @@ private struct WatchTargetRow: View {
             }
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
-            .help("Remove target")
+            .help(language.text("Remove target", "移除目标"))
         }
         .padding(.vertical, 13)
     }
@@ -158,9 +181,9 @@ private struct AddWatchedAppSheet: View {
         HStack(alignment: .center, spacing: 12) {
             IconRoundel(systemImage: "plus", tint: .blue)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Add Watched App")
+                Text(model.t("Add Watched App", "添加监控应用"))
                     .font(.title3.weight(.semibold))
-                Text("Pick only apps that reliably pull you into a feed.")
+                Text(model.t("Pick only apps that reliably pull you into a feed.", "只选择那些确实容易把你拉进信息流的应用。"))
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
@@ -174,7 +197,7 @@ private struct AddWatchedAppSheet: View {
             }
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
-            .help("Close")
+            .help(model.t("Close", "关闭"))
         }
         .padding(20)
     }
@@ -182,13 +205,14 @@ private struct AddWatchedAppSheet: View {
     @ViewBuilder
     private var frontmostSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionKicker("Last external app", systemImage: "scope")
+            SectionKicker(model.t("Last external app", "最近外部应用"), systemImage: "scope")
 
             if let app = model.lastExternalAppForAdding {
                 CandidateRow(
                     candidate: app,
                     isAlreadyWatched: model.isAlreadyWatched(app),
-                    actionTitle: model.isAlreadyWatched(app) ? "Added" : "Add"
+                    actionTitle: model.isAlreadyWatched(app) ? model.t("Added", "已添加") : model.t("Add", "添加"),
+                    language: model.language
                 ) {
                     model.addWatchedApp(app)
                     dismiss()
@@ -196,8 +220,8 @@ private struct AddWatchedAppSheet: View {
             } else {
                 EmptyHintRow(
                     systemImage: "rectangle.dashed",
-                    title: "No external app captured yet",
-                    subtitle: "Open the app you want to watch once, then return here."
+                    title: model.t("No external app captured yet", "还没有捕获到外部应用"),
+                    subtitle: model.t("Open the app you want to watch once, then return here.", "先打开一次你想监控的应用，再回到这里。")
                 )
             }
         }
@@ -206,20 +230,20 @@ private struct AddWatchedAppSheet: View {
     private var runningAppsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                SectionKicker("Running apps", systemImage: "list.bullet.rectangle")
+                SectionKicker(model.t("Running apps", "运行中的应用"), systemImage: "list.bullet.rectangle")
                 Spacer()
                 Button {
                     refreshCandidates()
                 } label: {
-                    Label("Refresh", systemImage: "arrow.clockwise")
+                    Label(model.t("Refresh", "刷新"), systemImage: "arrow.clockwise")
                 }
                 .labelStyle(.iconOnly)
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .help("Refresh running apps")
+                .help(model.t("Refresh running apps", "刷新运行中的应用"))
             }
 
-            TextField("Search app name or bundle id", text: $searchText)
+            TextField(model.t("Search app name or bundle id", "搜索应用名或 bundle id"), text: $searchText)
                 .textFieldStyle(.roundedBorder)
 
             ScrollView {
@@ -227,8 +251,8 @@ private struct AddWatchedAppSheet: View {
                     if filteredCandidates.isEmpty {
                         EmptyHintRow(
                             systemImage: "magnifyingglass",
-                            title: "No matching running apps",
-                            subtitle: "Launch the app first, or choose an .app from Applications."
+                            title: model.t("No matching running apps", "没有匹配的运行中应用"),
+                            subtitle: model.t("Launch the app first, or choose an .app from Applications.", "先启动应用，或从 Applications 里选择 .app。")
                         )
                         .padding(.vertical, 18)
                     } else {
@@ -236,7 +260,8 @@ private struct AddWatchedAppSheet: View {
                             CandidateRow(
                                 candidate: candidate,
                                 isAlreadyWatched: model.isAlreadyWatched(candidate),
-                                actionTitle: model.isAlreadyWatched(candidate) ? "Added" : "Add"
+                                actionTitle: model.isAlreadyWatched(candidate) ? model.t("Added", "已添加") : model.t("Add", "添加"),
+                                language: model.language
                             ) {
                                 model.addWatchedApp(candidate)
                                 dismiss()
@@ -262,9 +287,9 @@ private struct AddWatchedAppSheet: View {
         HStack(spacing: 12) {
             IconRoundel(systemImage: "folder", tint: .orange)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Choose from Applications")
+                Text(model.t("Choose from Applications", "从 Applications 选择"))
                     .font(.callout.weight(.medium))
-                Text("Use this when the app is installed but not currently running.")
+                Text(model.t("Use this when the app is installed but not currently running.", "应用已安装但当前没有运行时，用这个入口。"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -274,7 +299,7 @@ private struct AddWatchedAppSheet: View {
                     dismiss()
                 }
             } label: {
-                Label("Choose .app", systemImage: "plus")
+                Label(model.t("Choose .app", "选择 .app"), systemImage: "plus")
             }
         }
         .padding(14)
@@ -294,6 +319,7 @@ private struct CandidateRow: View {
     var candidate: RunningAppCandidate
     var isAlreadyWatched: Bool
     var actionTitle: String
+    var language: AppLanguage
     var add: () -> Void
 
     var body: some View {
@@ -306,7 +332,7 @@ private struct CandidateRow: View {
                         .font(.callout.weight(.medium))
                         .lineLimit(1)
                     if candidate.isFrontmost {
-                        Text("Frontmost")
+                        Text(language.text("Frontmost", "最前台"))
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(.cyan)
                             .padding(.horizontal, 6)
@@ -315,7 +341,7 @@ private struct CandidateRow: View {
                     }
                 }
 
-                Text(candidate.bundleIdentifier.isEmpty ? "No bundle identifier" : candidate.bundleIdentifier)
+                Text(candidate.bundleIdentifier.isEmpty ? language.text("No bundle identifier", "无 bundle identifier") : candidate.bundleIdentifier)
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
                     .lineLimit(1)

@@ -20,34 +20,33 @@ struct ContentView: View {
             }
         }
         .background(WindowMaterialConfigurator())
-        .navigationTitle((selection ?? .dashboard).title)
+        .navigationTitle((selection ?? .dashboard).title(language: model.language))
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button {
                     inspectorPresented.toggle()
                 } label: {
-                    Label("Inspector", systemImage: "sidebar.right")
+                    Label(model.t("Inspector", "检查器"), systemImage: "sidebar.right")
                 }
-                .help(inspectorPresented ? "Hide inspector" : "Show inspector")
+                .help(inspectorPresented ? model.t("Hide inspector", "隐藏检查器") : model.t("Show inspector", "显示检查器"))
 
                 Toggle(isOn: $model.monitoringEnabled) {
-                    Label(model.monitoringEnabled ? "Watching" : "Paused", systemImage: model.monitoringEnabled ? "eye" : "eye.slash")
+                    Label(model.watchStateLabel, systemImage: model.monitoringEnabled ? "eye" : "eye.slash")
                 }
                 .toggleStyle(.button)
-                .help(model.monitoringEnabled ? "Pause watching" : "Resume watching")
+                .help(model.monitoringEnabled ? model.t("Pause watching", "暂停监控") : model.t("Resume watching", "继续监控"))
 
-                Toggle(isOn: $model.demoMode) {
-                    Label("Demo", systemImage: "bolt")
+                SettingsLink {
+                    Label(model.t("Settings", "设置"), systemImage: "gearshape")
                 }
-                .toggleStyle(.button)
-                .help("Toggle demo thresholds")
+                .help(model.t("Open settings", "打开设置"))
 
                 Button {
                     model.simulateDouyinDrift()
                 } label: {
-                    Label("Simulate", systemImage: "play.circle")
+                    Label(model.t("Simulate", "模拟"), systemImage: "play.circle")
                 }
-                .help("Simulate a Douyin drift")
+                .help(model.t("Simulate a Douyin drift", "模拟一次抖音走神"))
             }
         }
     }
@@ -73,14 +72,14 @@ private struct ControlSidebar: View {
 
     var body: some View {
         List(selection: $selection) {
-            Section("Control") {
+            Section(model.t("Control", "控制")) {
                 ForEach(AppSection.allCases) { section in
-                    SidebarRow(section: section)
+                    SidebarRow(section: section, language: model.language)
                         .tag(section)
                 }
             }
 
-            Section("Watched") {
+            Section(model.t("Watched", "监控中")) {
                 ForEach(model.watchedApps.prefix(4)) { app in
                     HStack(spacing: 10) {
                         Image(systemName: app.isEnabled ? "checkmark.circle.fill" : "circle")
@@ -91,7 +90,7 @@ private struct ControlSidebar: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(app.displayName)
                                 .lineLimit(1)
-                            Text(app.isEnabled ? "Active target" : "Ignored")
+                            Text(app.isEnabled ? model.t("Active target", "已启用") : model.t("Ignored", "已忽略"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
@@ -108,10 +107,10 @@ private struct ControlSidebar: View {
                 HStack(spacing: 10) {
                     AppMark(size: 30)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(model.monitoringEnabled ? "Menu bar active" : "Monitoring paused")
+                        Text(model.monitoringEnabled ? model.t("Menu bar active", "菜单栏运行中") : model.t("Monitoring paused", "监控已暂停"))
                             .font(.callout.weight(.medium))
                             .lineLimit(1)
-                        Text("Close the window anytime")
+                        Text(model.t("Close the window anytime", "可以随时关闭窗口"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
@@ -128,6 +127,7 @@ private struct ControlSidebar: View {
 
 private struct SidebarRow: View {
     var section: AppSection
+    var language: AppLanguage
 
     var body: some View {
         HStack(spacing: 10) {
@@ -136,9 +136,9 @@ private struct SidebarRow: View {
                 .frame(width: 18)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(section.title)
+                Text(section.title(language: language))
                     .lineLimit(1)
-                Text(section.detail)
+                Text(section.detail(language: language))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -154,12 +154,12 @@ private struct ControlInspector: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 VStack(alignment: .leading, spacing: 8) {
-                    SectionKicker("Now", systemImage: "waveform.path.ecg")
+                    SectionKicker(model.t("Now", "当前"), systemImage: "waveform.path.ecg")
                     Text(model.activeAppName)
                         .font(.system(size: 24, weight: .semibold, design: .rounded))
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
-                    Text(model.activeBundleIdentifier.isEmpty ? "Waiting for an explicit target" : model.activeBundleIdentifier)
+                    Text(model.activeBundleIdentifier.isEmpty ? model.t("Waiting for an explicit target", "等待明确目标") : model.activeBundleIdentifier)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -168,7 +168,7 @@ private struct ControlInspector: View {
                     HStack {
                         Text(model.activeElapsed.shortDurationString)
                         Spacer()
-                        Text("gate \(model.visibleTriggerThreshold.shortDurationString)")
+                        Text("\(model.t("gate", "阈值")) \(model.visibleTriggerThreshold.shortDurationString)")
                     }
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
@@ -177,21 +177,21 @@ private struct ControlInspector: View {
                 HairlineDivider()
 
                 VStack(alignment: .leading, spacing: 2) {
-                    SectionKicker("Session", systemImage: "chart.bar.xaxis")
-                    DataRow("State", value: model.watchStateLabel)
-                    DataRow("Mode", value: model.modeLabel)
-                    DataRow("Targets", value: "\(model.enabledWatchCount)")
-                    DataRow("Saved", value: model.dailySummary.protectedSeconds.shortDurationString)
+                    SectionKicker(model.t("Session", "会话"), systemImage: "chart.bar.xaxis")
+                    DataRow(model.t("State", "状态"), value: model.watchStateLabel)
+                    DataRow(model.t("Gate", "阈值"), value: model.visibleTriggerThreshold.shortDurationString)
+                    DataRow(model.t("Targets", "目标"), value: "\(model.enabledWatchCount)")
+                    DataRow(model.t("Saved", "保护"), value: model.dailySummary.protectedSeconds.shortDurationString)
                 }
 
                 HairlineDivider()
 
                 VStack(alignment: .leading, spacing: 10) {
-                    SectionKicker("Actions", systemImage: "bolt")
+                    SectionKicker(model.t("Actions", "操作"), systemImage: "bolt")
                     Button {
                         model.simulateDouyinDrift()
                     } label: {
-                        Label("Simulate drift", systemImage: "play.fill")
+                        Label(model.t("Simulate drift", "模拟走神"), systemImage: "play.fill")
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.borderedProminent)
@@ -200,15 +200,12 @@ private struct ControlInspector: View {
                         if model.focusLockActive {
                             model.stopFocusLock()
                         } else {
-                            model.startFocusLock(minutes: model.demoMode ? 1 : 25)
+                            model.startFocusLock(minutes: 25)
                         }
                     } label: {
-                        Label(model.focusLockActive ? "Stop work lock" : "Start work lock", systemImage: model.focusLockActive ? "lock.open" : "lock.shield")
+                        Label(model.focusLockActive ? model.t("Stop work lock", "停止专注锁") : model.t("Start work lock", "开启专注锁"), systemImage: model.focusLockActive ? "lock.open" : "lock.shield")
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-
-                    Toggle("Demo thresholds", isOn: $model.demoMode)
-                        .toggleStyle(.switch)
                 }
 
                 HairlineDivider()

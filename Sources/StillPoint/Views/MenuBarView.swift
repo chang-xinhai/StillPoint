@@ -20,17 +20,17 @@ struct MenuBarView: View {
             HairlineDivider()
 
             VStack(spacing: 0) {
-                MenuCommandRow(title: "Open Control Center", shortcut: nil, systemImage: "macwindow") {
+                MenuCommandRow(title: model.t("Open Control Center", "打开控制中心"), shortcut: nil, systemImage: "macwindow") {
                     openControlCenter()
                 }
                 MenuCommandRow(
-                    title: model.monitoringEnabled ? "Pause Watching" : "Resume Watching",
+                    title: model.monitoringEnabled ? model.t("Pause Watching", "暂停监控") : model.t("Resume Watching", "继续监控"),
                     shortcut: "⌘ P",
                     systemImage: model.monitoringEnabled ? "pause.circle" : "play.circle"
                 ) {
                     model.monitoringEnabled.toggle()
                 }
-                MenuCommandRow(title: "Quit StillPoint", shortcut: "⌘ Q", systemImage: "xmark.square") {
+                MenuCommandRow(title: model.t("Quit StillPoint", "退出 StillPoint"), shortcut: "⌘ Q", systemImage: "xmark.square") {
                     NSApp.terminate(nil)
                 }
             }
@@ -56,7 +56,7 @@ struct MenuBarView: View {
             VStack(alignment: .trailing, spacing: 3) {
                 Text(model.modeLabel)
                     .font(.callout.weight(.semibold))
-                Text(model.demoMode ? "Demo timing" : "Normal timing")
+                Text("\(model.visibleTriggerThreshold.shortDurationString) gate")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -84,7 +84,7 @@ struct MenuBarView: View {
                 title: "Lock",
                 subtitle: model.focusLockActive ? "\(model.focusLockRemaining.shortDurationString) remaining" : "Off",
                 leadingValue: model.focusLockActive ? "active" : "ready",
-                trailingValue: model.demoMode ? "demo" : "normal",
+                trailingValue: "25 min",
                 value: model.focusLockActive ? 0.72 : 0,
                 tint: .orange
             )

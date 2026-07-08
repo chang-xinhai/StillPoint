@@ -30,15 +30,15 @@ struct FocusLockView: View {
                         }
 
                         ProgressLine(
-                            value: model.focusLockActive ? 1 - (model.focusLockRemaining / TimeInterval(model.demoMode ? 60 : 25 * 60)) : 0,
+                            value: model.focusLockActive ? 1 - (model.focusLockRemaining / TimeInterval(25 * 60)) : 0,
                             tint: .orange,
                             marker: nil
                         )
 
                         VStack(spacing: 0) {
-                            DataRow("Strict gate", value: model.demoMode ? "4s" : "10s", caption: "Threshold during active lock")
+                            DataRow("Strict gate", value: model.visibleTriggerThreshold.shortDurationString, caption: "Current watched-app gate")
                             HairlineDivider()
-                            DataRow("Mode", value: model.demoMode ? "Demo" : "Normal", caption: "Presentation pacing")
+                            DataRow("Mode", value: model.modeLabel, caption: "Per-app timing")
                             HairlineDivider()
                             DataRow("Watched targets", value: "\(model.enabledWatchCount)", caption: "Apps covered by the shield")
                         }
@@ -47,9 +47,9 @@ struct FocusLockView: View {
 
                 HStack(spacing: 10) {
                     Button {
-                        model.startFocusLock(minutes: model.demoMode ? 1 : 25)
+                        model.startFocusLock(minutes: 25)
                     } label: {
-                        Label(model.demoMode ? "1 min" : "25 min", systemImage: "lock.fill")
+                        Label("25 min", systemImage: "lock.fill")
                     }
                     .buttonStyle(.borderedProminent)
 
