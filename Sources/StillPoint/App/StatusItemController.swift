@@ -66,9 +66,9 @@ final class StatusItemController: NSObject {
                     self?.openControlCenterAction?()
                 }
             )
-            .frame(width: 398)
+            .frame(width: 382)
         )
-        hostingView.frame = NSRect(x: 0, y: 0, width: 398, height: 430)
+        hostingView.frame = NSRect(x: 0, y: 0, width: 382, height: 494)
 
         let item = NSMenuItem()
         item.view = hostingView

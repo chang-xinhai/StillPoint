@@ -444,23 +444,27 @@ h1 span {
   gap: 7px 12px;
 }
 
-.gate-row p {
+.gate-row p,
+.tuning-row p {
   grid-column: 1 / -1;
   margin: 0;
   font-size: 13px;
 }
 
-.gate-row strong {
+.gate-row strong,
+.tuning-row strong {
   font-size: 16px;
 }
 
-.gate-row span {
+.gate-row span,
+.tuning-row > span {
   color: rgba(255, 255, 255, 0.74);
   font-size: 15px;
   font-weight: 690;
 }
 
-.gate-row small {
+.gate-row small,
+.tuning-row small {
   grid-column: 1 / -1;
   overflow: hidden;
   font-size: 12px;
@@ -492,6 +496,34 @@ h1 span {
   width: 2px;
   height: 100%;
   background: #48e68b;
+}
+
+.tuning-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 12px;
+  margin-top: 16px;
+}
+
+.tuning-row p,
+.tuning-row small {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.mini-slider {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.mini-slider i {
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
 }
 
 .receipt-grid {
