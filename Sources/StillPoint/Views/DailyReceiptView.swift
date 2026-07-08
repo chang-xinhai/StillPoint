@@ -8,28 +8,28 @@ struct DailyReceiptView: View {
 
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                PageHeader(
+                WorkspaceHeader(
                     eyebrow: "Today",
                     title: "Daily Attention Receipt",
                     subtitle: "A single low-pressure review, never a per-exit interruption."
                 )
 
-                HStack(spacing: 12) {
-                    MetricTile(
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), spacing: 12)], spacing: 12) {
+                    SummaryTile(
                         title: "Checks",
                         value: "\(summary.driftChecks)",
                         caption: "Intent moments",
                         systemImage: "figure.mind.and.body",
-                        tint: .blue
+                        tint: .cyan
                     )
-                    MetricTile(
+                    SummaryTile(
                         title: "Closed",
                         value: "\(summary.closedDrifts)",
                         caption: "Feeds left",
                         systemImage: "xmark.circle",
                         tint: .red
                     )
-                    MetricTile(
+                    SummaryTile(
                         title: "Protected",
                         value: summary.protectedSeconds.shortDurationString,
                         caption: "Estimated return",
@@ -38,17 +38,16 @@ struct DailyReceiptView: View {
                     )
                 }
 
-                SurfaceCard {
+                PlainPanel {
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("Timeline")
-                            .font(.headline)
+                        SectionKicker("Timeline", systemImage: "clock")
 
                         if summary.hasData {
                             VStack(spacing: 0) {
-                                ForEach(model.todayEvents) { event in
+                                ForEach(model.todayEvents.reversed()) { event in
                                     ReceiptEventRow(event: event)
-                                    if event.id != model.todayEvents.last?.id {
-                                        QuietDivider()
+                                    if event.id != model.todayEvents.first?.id {
+                                        HairlineDivider()
                                     }
                                 }
                             }
@@ -68,7 +67,9 @@ struct DailyReceiptView: View {
                     }
                 }
             }
-            .padding(30)
+            .frame(maxWidth: 860, alignment: .leading)
+            .padding(.horizontal, 32)
+            .padding(.vertical, 28)
         }
     }
 }
@@ -78,7 +79,10 @@ private struct ReceiptEventRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            IconRoundel(systemImage: icon, tint: tint)
+            Image(systemName: icon)
+                .font(.callout.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 22)
             VStack(alignment: .leading, spacing: 3) {
                 Text(event.appName)
                     .font(.headline)
@@ -112,4 +116,3 @@ private struct ReceiptEventRow: View {
         }
     }
 }
-

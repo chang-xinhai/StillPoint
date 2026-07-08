@@ -3,23 +3,33 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var model: AppModel
     @State private var selection: AppSection? = .dashboard
+    @State private var inspectorPresented = true
 
     var body: some View {
-        ZStack {
-            ControlCenterBackground()
-
-            HStack(spacing: 16) {
-                ControlCenterRail(selection: $selection)
-                    .frame(width: 198)
-
+        NavigationSplitView {
+            ControlSidebar(model: model, selection: $selection)
+                .navigationSplitViewColumnWidth(min: 210, ideal: 238, max: 280)
+        } detail: {
+            ZStack {
+                ControlCenterBackground()
                 detail
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(18)
+            .inspector(isPresented: $inspectorPresented) {
+                ControlInspector(model: model)
+                    .inspectorColumnWidth(min: 260, ideal: 292, max: 340)
+            }
         }
         .background(WindowMaterialConfigurator())
+        .navigationTitle((selection ?? .dashboard).title)
         .toolbar {
-            ToolbarItemGroup {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button {
+                    inspectorPresented.toggle()
+                } label: {
+                    Label("Inspector", systemImage: "sidebar.right")
+                }
+                .help(inspectorPresented ? "Hide inspector" : "Show inspector")
+
                 Toggle(isOn: $model.monitoringEnabled) {
                     Label(model.monitoringEnabled ? "Watching" : "Paused", systemImage: model.monitoringEnabled ? "eye" : "eye.slash")
                 }
@@ -57,89 +67,160 @@ struct ContentView: View {
     }
 }
 
-private struct ControlCenterRail: View {
+private struct ControlSidebar: View {
+    @ObservedObject var model: AppModel
     @Binding var selection: AppSection?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 10) {
-                AppMark(size: 34)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("StillPoint")
-                        .font(.headline)
-                    Text("menu bar guardian")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+        List(selection: $selection) {
+            Section("Control") {
+                ForEach(AppSection.allCases) { section in
+                    SidebarRow(section: section)
+                        .tag(section)
                 }
             }
-            .padding(.bottom, 6)
 
-            VStack(spacing: 6) {
-                ForEach(AppSection.allCases) { section in
-                    RailButton(
-                        section: section,
-                        isSelected: (selection ?? .dashboard) == section
-                    ) {
-                        selection = section
+            Section("Watched") {
+                ForEach(model.watchedApps.prefix(4)) { app in
+                    HStack(spacing: 10) {
+                        Image(systemName: app.isEnabled ? "checkmark.circle.fill" : "circle")
+                            .font(.callout)
+                            .foregroundStyle(app.isEnabled ? .green : .secondary)
+                            .frame(width: 18)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(app.displayName)
+                                .lineLimit(1)
+                            Text(app.isEnabled ? "Active target" : "Ignored")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
                     }
                 }
             }
-
-            Spacer()
-
-            Text("Close this window anytime. StillPoint keeps watching from the menu bar.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(16)
-        .background {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(.regularMaterial)
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.62))
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(.primary.opacity(0.08), lineWidth: 1)
+        .listStyle(.sidebar)
+        .navigationTitle("StillPoint")
+        .safeAreaInset(edge: .bottom) {
+            VStack(alignment: .leading, spacing: 12) {
+                HairlineDivider()
+                HStack(spacing: 10) {
+                    AppMark(size: 30)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(model.monitoringEnabled ? "Menu bar active" : "Monitoring paused")
+                            .font(.callout.weight(.medium))
+                            .lineLimit(1)
+                        Text("Close the window anytime")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
+            .background(.bar)
         }
     }
 }
 
-private struct RailButton: View {
+private struct SidebarRow: View {
     var section: AppSection
-    var isSelected: Bool
-    var action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                Image(systemName: section.systemImage)
-                    .frame(width: 18)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(section.title)
-                        .font(.callout.weight(.semibold))
-                    Text(section.detail)
-                        .font(.caption)
-                        .foregroundStyle(isSelected ? .white.opacity(0.74) : .secondary)
-                }
-                Spacer()
-            }
-            .foregroundStyle(isSelected ? .white : .primary)
-            .padding(.horizontal, 11)
-            .padding(.vertical, 10)
-            .background {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(.blue.gradient)
-                        .shadow(color: .blue.opacity(0.22), radius: 14, x: 0, y: 8)
-                } else {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(.white.opacity(0.001))
-                }
+        HStack(spacing: 10) {
+            Image(systemName: section.systemImage)
+                .foregroundStyle(.secondary)
+                .frame(width: 18)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(section.title)
+                    .lineLimit(1)
+                Text(section.detail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
         }
-        .buttonStyle(.plain)
+    }
+}
+
+private struct ControlInspector: View {
+    @ObservedObject var model: AppModel
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 8) {
+                    SectionKicker("Now", systemImage: "waveform.path.ecg")
+                    Text(model.activeAppName)
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                    Text(model.activeBundleIdentifier.isEmpty ? "Waiting for an explicit target" : model.activeBundleIdentifier)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+
+                    ProgressLine(value: model.activeProgress, tint: model.focusLockActive ? .orange : .cyan, marker: 0.86)
+                    HStack {
+                        Text(model.activeElapsed.shortDurationString)
+                        Spacer()
+                        Text("gate \(model.visibleTriggerThreshold.shortDurationString)")
+                    }
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                }
+
+                HairlineDivider()
+
+                VStack(alignment: .leading, spacing: 2) {
+                    SectionKicker("Session", systemImage: "chart.bar.xaxis")
+                    DataRow("State", value: model.watchStateLabel)
+                    DataRow("Mode", value: model.modeLabel)
+                    DataRow("Targets", value: "\(model.enabledWatchCount)")
+                    DataRow("Saved", value: model.dailySummary.protectedSeconds.shortDurationString)
+                }
+
+                HairlineDivider()
+
+                VStack(alignment: .leading, spacing: 10) {
+                    SectionKicker("Actions", systemImage: "bolt")
+                    Button {
+                        model.simulateDouyinDrift()
+                    } label: {
+                        Label("Simulate drift", systemImage: "play.fill")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.borderedProminent)
+
+                    Button {
+                        if model.focusLockActive {
+                            model.stopFocusLock()
+                        } else {
+                            model.startFocusLock(minutes: model.demoMode ? 1 : 25)
+                        }
+                    } label: {
+                        Label(model.focusLockActive ? "Stop work lock" : "Start work lock", systemImage: model.focusLockActive ? "lock.open" : "lock.shield")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Toggle("Demo thresholds", isOn: $model.demoMode)
+                        .toggleStyle(.switch)
+                }
+
+                HairlineDivider()
+
+                Text(model.statusMessage)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(18)
+        }
+        .background(.regularMaterial)
     }
 }
 

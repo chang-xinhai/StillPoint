@@ -135,6 +135,23 @@ Acceptance:
 - Control Center remains available on demand.
 - `./script/test.sh` and `./script/build_and_run.sh --verify` pass.
 
+## Phase 6.6: macOS UI Maturity Pass
+
+Status: Done
+
+Goal:
+
+- Make StillPoint read as a mature macOS utility rather than an AI-generated card dashboard.
+
+Acceptance:
+
+- Control Center uses a native-feeling sidebar/detail/inspector structure.
+- Sidebar rows stay compact and source-list-like.
+- Dashboard emphasizes one live checkpoint surface, compact metrics, and a right inspector.
+- Menu bar panel follows a CodexBar-like density pattern: top tabs, status sections, progress line, and concise command rows.
+- Toolbar icons are semantic and do not duplicate system sidebar controls.
+- `./script/test.sh` and `./script/build_and_run.sh --verify` pass.
+
 ## Phase 7: Android Migration Plan
 
 Status: Not started

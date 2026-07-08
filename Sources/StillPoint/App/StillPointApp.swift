@@ -9,9 +9,9 @@ struct StillPointApp: App {
     var body: some Scene {
         WindowGroup("StillPoint", id: "control") {
             ContentView(model: model)
-                .frame(width: 980, height: 660)
+                .frame(width: 1120, height: 700)
         }
-        .defaultSize(width: 980, height: 660)
+        .defaultSize(width: 1120, height: 700)
 
         MenuBarExtra {
             MenuBarView(model: model)

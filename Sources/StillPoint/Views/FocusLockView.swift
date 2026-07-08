@@ -6,13 +6,13 @@ struct FocusLockView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                PageHeader(
+                WorkspaceHeader(
                     eyebrow: "Shield",
                     title: "Deep Work Lock",
                     subtitle: "A stricter gate for coding sessions, build waits, and agent waits."
                 )
 
-                SurfaceCard(minHeight: 230) {
+                PlainPanel(minHeight: 232) {
                     VStack(alignment: .leading, spacing: 18) {
                         HStack(alignment: .center, spacing: 14) {
                             IconRoundel(
@@ -29,21 +29,18 @@ struct FocusLockView: View {
                             Spacer()
                         }
 
-                        HStack(spacing: 12) {
-                            MetricTile(
-                                title: "Threshold",
-                                value: model.demoMode ? "4s" : "10s",
-                                caption: "During active lock",
-                                systemImage: "bolt",
-                                tint: .orange
-                            )
-                            MetricTile(
-                                title: "Mode",
-                                value: model.demoMode ? "Demo" : "Normal",
-                                caption: "Presentation pacing",
-                                systemImage: "switch.2",
-                                tint: .blue
-                            )
+                        ProgressLine(
+                            value: model.focusLockActive ? 1 - (model.focusLockRemaining / TimeInterval(model.demoMode ? 60 : 25 * 60)) : 0,
+                            tint: .orange,
+                            marker: nil
+                        )
+
+                        VStack(spacing: 0) {
+                            DataRow("Strict gate", value: model.demoMode ? "4s" : "10s", caption: "Threshold during active lock")
+                            HairlineDivider()
+                            DataRow("Mode", value: model.demoMode ? "Demo" : "Normal", caption: "Presentation pacing")
+                            HairlineDivider()
+                            DataRow("Watched targets", value: "\(model.enabledWatchCount)", caption: "Apps covered by the shield")
                         }
                     }
                 }
@@ -82,7 +79,9 @@ struct FocusLockView: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
-            .padding(30)
+            .frame(maxWidth: 860, alignment: .leading)
+            .padding(.horizontal, 32)
+            .padding(.vertical, 28)
         }
     }
 }

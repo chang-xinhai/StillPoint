@@ -34,9 +34,11 @@ The exam demo should prove the core loop:
 ```
 
 StillPoint launches as a menu bar agent with no Dock icon and a glass Control
-Center window for demos. Close the window anytime; the menu bar agent keeps
-watching. Use the menu bar item to start Deep Work Lock, trigger the demo, or
-reopen Control Center.
+Center window for demos. The Control Center uses a native sidebar, detail, and
+inspector layout so the live gate, watched targets, lock state, and receipt stay
+visible without turning into a generic dashboard. Close the window anytime; the
+menu bar agent keeps watching. Use the menu bar item to start Deep Work Lock,
+trigger the demo, or reopen Control Center.
 
 For a launch check:
 

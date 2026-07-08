@@ -7,19 +7,35 @@ struct WatchListView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                PageHeader(
+                WorkspaceHeader(
                     eyebrow: "Targets",
                     title: "Watch List",
                     subtitle: "Explicit high-risk feeds only. Work tools stay out of the net by default."
                 )
 
-                VStack(spacing: 10) {
-                    ForEach($model.watchedApps) { $app in
-                        WatchTargetRow(app: $app)
+                PlainPanel {
+                    VStack(spacing: 0) {
+                        HStack {
+                            SectionKicker("Explicit targets", systemImage: "eye")
+                            Spacer()
+                            Text("\(model.enabledWatchCount) enabled")
+                                .font(.caption.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.bottom, 10)
+
+                        ForEach($model.watchedApps) { $app in
+                            WatchTargetRow(app: $app)
+                            if app.id != model.watchedApps.last?.id {
+                                HairlineDivider()
+                            }
+                        }
                     }
                 }
             }
-            .padding(30)
+            .frame(maxWidth: 860, alignment: .leading)
+            .padding(.horizontal, 32)
+            .padding(.vertical, 28)
         }
     }
 }
@@ -28,39 +44,34 @@ private struct WatchTargetRow: View {
     @Binding var app: WatchedApp
 
     var body: some View {
-        SurfaceCard {
-            HStack(alignment: .top, spacing: 14) {
-                IconRoundel(systemImage: app.isEnabled ? "eye.fill" : "eye.slash", tint: app.isEnabled ? .green : .secondary)
+        HStack(alignment: .center, spacing: 14) {
+            Image(systemName: app.isEnabled ? "checkmark.circle.fill" : "circle")
+                .font(.title3)
+                .foregroundStyle(app.isEnabled ? .green : .secondary)
+                .frame(width: 24)
 
-                VStack(alignment: .leading, spacing: 7) {
-                    HStack(spacing: 8) {
-                        Text(app.displayName)
-                            .font(.headline)
-                        StatusPill(
-                            text: app.isEnabled ? "On" : "Off",
-                            systemImage: app.isEnabled ? "checkmark" : "minus",
-                            tint: app.isEnabled ? .green : .secondary
-                        )
-                    }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(app.displayName)
+                    .font(.headline)
+                    .lineLimit(1)
 
-                    Text(app.detail)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                Text(app.detail)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                    Text(app.matchTerms.joined(separator: "  ·  "))
-                        .font(.caption.monospaced())
-                        .foregroundStyle(.tertiary)
-                        .lineLimit(1)
-                }
-
-                Spacer()
-
-                Toggle("", isOn: $app.isEnabled)
-                    .labelsHidden()
-                    .toggleStyle(.switch)
+                Text(app.matchTerms.joined(separator: "  /  "))
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
             }
+
+            Spacer()
+
+            Toggle("", isOn: $app.isEnabled)
+                .labelsHidden()
+                .toggleStyle(.switch)
         }
+        .padding(.vertical, 13)
     }
 }
-

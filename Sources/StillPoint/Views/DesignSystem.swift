@@ -22,6 +22,44 @@ struct PageHeader: View {
     }
 }
 
+struct WorkspaceHeader<Trailing: View>: View {
+    var eyebrow: String
+    var title: String
+    var subtitle: String
+    @ViewBuilder var trailing: Trailing
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 18) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(eyebrow.uppercased())
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Text(title)
+                    .font(.system(size: 26, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+                Text(subtitle)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 20)
+
+            trailing
+        }
+    }
+}
+
+extension WorkspaceHeader where Trailing == EmptyView {
+    init(eyebrow: String, title: String, subtitle: String) {
+        self.eyebrow = eyebrow
+        self.title = title
+        self.subtitle = subtitle
+        self.trailing = EmptyView()
+    }
+}
+
 struct SurfaceCard<Content: View>: View {
     var minHeight: CGFloat?
     @ViewBuilder var content: Content
@@ -36,13 +74,31 @@ struct SurfaceCard<Content: View>: View {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(.regularMaterial)
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.56))
+                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.42))
         }
         .overlay {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .strokeBorder(.primary.opacity(0.08), lineWidth: 1)
         }
-        .shadow(color: .black.opacity(0.08), radius: 24, x: 0, y: 14)
+        .shadow(color: .black.opacity(0.045), radius: 20, x: 0, y: 12)
+    }
+}
+
+struct PlainPanel<Content: View>: View {
+    var minHeight: CGFloat?
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            content
+        }
+        .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .topLeading)
+        .padding(18)
+        .background(Color(nsColor: .controlBackgroundColor).opacity(0.58), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                .strokeBorder(.primary.opacity(0.07), lineWidth: 1)
+        }
     }
 }
 
@@ -76,6 +132,36 @@ struct MetricTile: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}
+
+struct SummaryTile: View {
+    var title: String
+    var value: String
+    var caption: String
+    var systemImage: String
+    var tint: Color
+
+    var body: some View {
+        PlainPanel(minHeight: 124) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 8) {
+                    Image(systemName: systemImage)
+                        .font(.callout.weight(.semibold))
+                        .foregroundStyle(tint)
+                    Text(title)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                Text(value)
+                    .font(.system(size: 28, weight: .semibold, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                Text(caption)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -158,6 +244,105 @@ struct IconRoundel: View {
             .foregroundStyle(tint)
             .frame(width: 34, height: 34)
             .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+struct HairlineDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(.primary.opacity(0.10))
+            .frame(height: 1)
+    }
+}
+
+struct ProgressLine: View {
+    var value: Double
+    var tint: Color = .cyan
+    var marker: Double?
+
+    var body: some View {
+        GeometryReader { proxy in
+            let clamped = min(max(value, 0), 1)
+            let markerValue = marker.map { min(max($0, 0), 1) }
+
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(.primary.opacity(0.09))
+
+                Capsule()
+                    .fill(tint.opacity(0.92))
+                    .frame(width: max(6, proxy.size.width * clamped))
+
+                if let markerValue {
+                    Rectangle()
+                        .fill(Color(nsColor: .windowBackgroundColor))
+                        .frame(width: 2)
+                        .offset(x: proxy.size.width * markerValue)
+                    Rectangle()
+                        .fill(.green)
+                        .frame(width: 2)
+                        .offset(x: proxy.size.width * markerValue + 3)
+                }
+            }
+        }
+        .frame(height: 8)
+    }
+}
+
+struct DataRow: View {
+    var title: String
+    var value: String
+    var caption: String?
+
+    init(_ title: String, value: String, caption: String? = nil) {
+        self.title = title
+        self.value = value
+        self.caption = caption
+    }
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.callout.weight(.medium))
+                if let caption {
+                    Text(caption)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer()
+
+            Text(value)
+                .font(.callout.monospacedDigit().weight(.semibold))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+        .padding(.vertical, 9)
+    }
+}
+
+struct SectionKicker: View {
+    var title: String
+    var systemImage: String?
+
+    init(_ title: String, systemImage: String? = nil) {
+        self.title = title
+        self.systemImage = systemImage
+    }
+
+    var body: some View {
+        HStack(spacing: 7) {
+            if let systemImage {
+                Image(systemName: systemImage)
+                    .font(.caption.weight(.semibold))
+            }
+            Text(title.uppercased())
+                .font(.caption.weight(.semibold))
+        }
+        .foregroundStyle(.secondary)
     }
 }
 

@@ -92,7 +92,7 @@ final class AppModel: ObservableObject {
             return "lock.shield.fill"
         }
 
-        return monitoringEnabled ? "pause.circle.fill" : "pause.circle"
+        return monitoringEnabled ? "scope" : "pause.circle"
     }
 
     var barTitle: String {
