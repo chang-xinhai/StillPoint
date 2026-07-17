@@ -10,8 +10,8 @@ struct WatchListView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 WorkspaceHeader(
-                    eyebrow: model.t("Targets", "目标"),
-                    title: model.t("Watch List", "监控列表"),
+                    eyebrow: model.t("Chosen targets", "已选目标"),
+                    title: model.t("Watch less, on purpose.", "只监控真正需要的。"),
                     subtitle: model.t(
                         "Explicit high-risk feeds only. Work tools stay out of the net by default.",
                         "只监控明确高风险的信息流。工作工具默认不进入拦截网。"
@@ -68,9 +68,10 @@ struct WatchListView: View {
                     }
                 }
             }
-            .frame(maxWidth: 860, alignment: .leading)
-            .padding(.horizontal, 32)
-            .padding(.vertical, 28)
+            .frame(maxWidth: 900, alignment: .leading)
+            .padding(.horizontal, 34)
+            .padding(.top, 30)
+            .padding(.bottom, 42)
         }
         .sheet(isPresented: $isAddingTarget) {
             AddWatchedAppSheet(model: model)
@@ -85,7 +86,10 @@ private struct WatchTargetRow: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
-            WatchStateButton(isEnabled: $app.isEnabled, language: language)
+            IconRoundel(
+                systemImage: app.isEnabled ? "eye.fill" : "eye.slash",
+                tint: app.isEnabled ? StillPointPalette.accent : .secondary
+            )
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(app.displayName)
@@ -124,6 +128,8 @@ private struct WatchTargetRow: View {
             Toggle("", isOn: $app.isEnabled)
                 .labelsHidden()
                 .toggleStyle(.switch)
+                .tint(StillPointPalette.accent)
+                .help(app.isEnabled ? language.text("Pause this target", "暂停此目标") : language.text("Watch this target", "监控此目标"))
 
             Button(role: .destructive) {
                 remove()
@@ -168,7 +174,7 @@ private struct AddWatchedAppSheet: View {
             .padding(20)
         }
         .frame(width: 560, height: 620)
-        .background(.regularMaterial)
+        .background(.ultraThickMaterial)
         .onAppear {
             refreshCandidates()
         }
@@ -331,10 +337,10 @@ private struct CandidateRow: View {
                     if candidate.isFrontmost {
                         Text(language.text("Frontmost", "最前台"))
                             .font(.caption2.weight(.semibold))
-                            .foregroundStyle(.cyan)
+                            .foregroundStyle(StillPointPalette.accent)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(.cyan.opacity(0.11), in: Capsule())
+                            .background(StillPointPalette.accent.opacity(0.10), in: Capsule())
                     }
                 }
 

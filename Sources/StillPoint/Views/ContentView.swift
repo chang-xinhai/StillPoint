@@ -4,7 +4,7 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var model: AppModel
     @State private var selection: AppSection? = .dashboard
-    @State private var inspectorPresented = true
+    @State private var inspectorPresented = false
 
     var body: some View {
         NavigationSplitView {
@@ -21,33 +21,27 @@ struct ContentView: View {
             }
         }
         .background(WindowMaterialConfigurator())
+        .tint(StillPointPalette.accent)
         .navigationTitle((selection ?? .dashboard).title(language: model.language))
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button {
-                    inspectorPresented.toggle()
-                } label: {
-                    Label(model.t("Inspector", "检查器"), systemImage: "sidebar.right")
-                }
-                .help(inspectorPresented ? model.t("Hide inspector", "隐藏检查器") : model.t("Show inspector", "显示检查器"))
-
                 Toggle(isOn: $model.monitoringEnabled) {
                     Label(model.watchStateLabel, systemImage: model.monitoringEnabled ? "eye" : "eye.slash")
                 }
                 .toggleStyle(.button)
                 .help(model.monitoringEnabled ? model.t("Pause watching", "暂停监控") : model.t("Resume watching", "继续监控"))
 
+                Button {
+                    inspectorPresented.toggle()
+                } label: {
+                    Label(model.t("Details", "详情"), systemImage: "sidebar.right")
+                }
+                .help(inspectorPresented ? model.t("Hide details", "隐藏详情") : model.t("Show details", "显示详情"))
+
                 SettingsLink {
                     Label(model.t("Settings", "设置"), systemImage: "gearshape")
                 }
                 .help(model.t("Open settings", "打开设置"))
-
-                Button {
-                    model.simulateDouyinDrift()
-                } label: {
-                    Label(model.t("Simulate", "模拟"), systemImage: "play.circle")
-                }
-                .help(model.t("Simulate a Douyin drift", "模拟一次抖音走神"))
             }
         }
     }
@@ -90,9 +84,11 @@ private struct ControlSidebar: View {
         .navigationTitle("StillPoint")
         .safeAreaInset(edge: .bottom) {
             VStack(alignment: .leading, spacing: 12) {
-                HairlineDivider()
-                HStack(spacing: 10) {
-                    AppMark(size: 30)
+                HStack(spacing: 9) {
+                    Circle()
+                        .fill(model.monitoringEnabled ? StillPointPalette.accent : Color.secondary)
+                        .frame(width: 7, height: 7)
+                        .shadow(color: model.monitoringEnabled ? StillPointPalette.accent.opacity(0.35) : .clear, radius: 5)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(model.monitoringEnabled ? model.t("Menu bar active", "菜单栏运行中") : model.t("Monitoring paused", "监控已暂停"))
                             .font(.callout.weight(.medium))
@@ -105,9 +101,9 @@ private struct ControlSidebar: View {
                 }
             }
             .padding(.horizontal, 14)
-            .padding(.top, 8)
+            .padding(.top, 10)
             .padding(.bottom, 12)
-            .background(.bar)
+            .background(.ultraThinMaterial)
         }
     }
 }
@@ -172,7 +168,7 @@ private struct ControlInspector: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
 
-                    ProgressLine(value: model.activeProgress, tint: model.focusLockActive ? .orange : .cyan, marker: 0.86)
+                    ProgressLine(value: model.activeProgress, tint: model.focusLockActive ? StillPointPalette.warm : StillPointPalette.accent, marker: 0.86)
                     HStack {
                         Text(model.activeElapsed.shortDurationString)
                         Spacer()
@@ -225,7 +221,7 @@ private struct ControlInspector: View {
             }
             .padding(18)
         }
-        .background(.regularMaterial)
+        .background(.ultraThinMaterial)
     }
 }
 
@@ -237,7 +233,7 @@ private struct ControlCenterBackground: View {
             LinearGradient(
                 colors: [
                     Color(nsColor: .textBackgroundColor).opacity(0.96),
-                    Color(nsColor: .controlBackgroundColor).opacity(0.92),
+                    Color(nsColor: .controlBackgroundColor).opacity(0.88),
                     Color(nsColor: .windowBackgroundColor).opacity(0.98)
                 ],
                 startPoint: .topLeading,
@@ -246,22 +242,12 @@ private struct ControlCenterBackground: View {
 
             RadialGradient(
                 colors: [
-                    Color.blue.opacity(0.08),
+                    StillPointPalette.accent.opacity(0.075),
                     Color.clear
                 ],
                 center: .topTrailing,
-                startRadius: 80,
-                endRadius: 620
-            )
-
-            RadialGradient(
-                colors: [
-                    Color.green.opacity(0.035),
-                    Color.clear
-                ],
-                center: .bottomLeading,
-                startRadius: 60,
-                endRadius: 520
+                startRadius: 40,
+                endRadius: 680
             )
         }
         .ignoresSafeArea()

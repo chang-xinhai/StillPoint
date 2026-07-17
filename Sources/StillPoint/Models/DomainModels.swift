@@ -86,10 +86,10 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
 
     func title(language: AppLanguage) -> String {
         switch self {
-        case .dashboard: language.text("Dashboard", "仪表盘")
-        case .rules: language.text("Watch List", "监控列表")
-        case .focusLock: language.text("Deep Work Lock", "专注锁")
-        case .receipt: language.text("Daily Receipt", "每日小票")
+        case .dashboard: language.text("Now", "此刻")
+        case .rules: language.text("Targets", "目标")
+        case .focusLock: language.text("Deep Work", "深度工作")
+        case .receipt: language.text("Today’s Receipt", "今天的小票")
         }
     }
 
@@ -99,10 +99,10 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
 
     func detail(language: AppLanguage) -> String {
         switch self {
-        case .dashboard: language.text("Live state", "实时状态")
-        case .rules: language.text("Targets", "目标应用")
-        case .focusLock: language.text("Shield", "保护")
-        case .receipt: language.text("Today", "今天")
+        case .dashboard: language.text("Live attention", "实时注意力")
+        case .rules: language.text("Chosen apps", "已选应用")
+        case .focusLock: language.text("Focus boundary", "专注边界")
+        case .receipt: language.text("One calm review", "一次轻量回顾")
         }
     }
 

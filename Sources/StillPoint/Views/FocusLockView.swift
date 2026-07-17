@@ -8,24 +8,24 @@ struct FocusLockView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 WorkspaceHeader(
-                    eyebrow: model.t("Shield", "保护"),
-                    title: model.t("Deep Work Lock", "专注锁"),
+                    eyebrow: model.t("Deep Work", "深度工作"),
+                    title: model.t("Hold the boundary.", "守住这段边界。"),
                     subtitle: model.t(
-                        "A lock for coding sessions, build waits, and agent waits.",
-                        "给编程、构建等待、等待 agent 回复时使用的锁定模式。"
+                        "Use a three-second checkpoint during coding, build waits, and agent waits.",
+                        "在编程、构建等待和等待 agent 回复时，用三秒检查守住注意力。"
                     )
                 )
 
-                PlainPanel(minHeight: 232) {
+                SurfaceCard(minHeight: 248) {
                     VStack(alignment: .leading, spacing: 18) {
                         HStack(alignment: .center, spacing: 14) {
                             IconRoundel(
                                 systemImage: model.focusLockActive ? "lock.shield.fill" : "lock.open",
-                                tint: model.focusLockActive ? .orange : .secondary
+                                tint: model.focusLockActive ? StillPointPalette.warm : StillPointPalette.accent
                             )
 
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(model.focusLockActive ? model.t("Lock is active", "锁定生效中") : model.t("Ready when you are", "准备就绪"))
+                                Text(model.focusLockActive ? model.t("Boundary is active", "边界已生效") : model.t("Choose a focus window", "选择专注时段"))
                                     .font(.title2.weight(.semibold))
                                 Text(model.focusLockActive ? model.t("\(model.focusLockRemaining.shortDurationString) remaining", "剩余 \(model.focusLockRemaining.shortDurationString)") : model.t("Watched feeds switch to a 3s checkpoint during lock.", "锁定期间，被监控信息流会切换为 3 秒检查点。"))
                                     .foregroundStyle(.secondary)
@@ -35,7 +35,7 @@ struct FocusLockView: View {
 
                         ProgressLine(
                             value: model.focusLockActive ? 1 - (model.focusLockRemaining / AttentionGatePolicy.overlayFocusLockSeconds) : 0,
-                            tint: .orange,
+                            tint: StillPointPalette.warm,
                             marker: nil
                         )
 
@@ -56,6 +56,7 @@ struct FocusLockView: View {
                         Label(model.t("25 min", "25 分钟"), systemImage: "lock.fill")
                     }
                     .buttonStyle(.borderedProminent)
+                    .tint(StillPointPalette.accent)
 
                     Button {
                         model.startFocusLock(minutes: 45)
@@ -86,9 +87,10 @@ struct FocusLockView: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
-            .frame(maxWidth: 860, alignment: .leading)
-            .padding(.horizontal, 32)
-            .padding(.vertical, 28)
+            .frame(maxWidth: 900, alignment: .leading)
+            .padding(.horizontal, 34)
+            .padding(.top, 30)
+            .padding(.bottom, 42)
         }
     }
 }

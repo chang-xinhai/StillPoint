@@ -36,9 +36,10 @@ final class StatusItemController: NSObject {
         guard let button = statusItem?.button else { return }
 
         button.image = statusImage()
-        button.image?.isTemplate = true
         button.title = ""
-        button.imagePosition = .imageLeading
+        button.imagePosition = .imageOnly
+        button.imageScaling = .scaleProportionallyDown
+        button.contentTintColor = nil
         button.toolTip = "StillPoint"
         button.target = self
         button.action = #selector(showMenu(_:))
@@ -66,9 +67,9 @@ final class StatusItemController: NSObject {
                     self?.openControlCenterAction?()
                 }
             )
-            .frame(width: 382)
+            .frame(width: 356)
         )
-        hostingView.frame = NSRect(x: 0, y: 0, width: 382, height: 494)
+        hostingView.frame = NSRect(x: 0, y: 0, width: 356, height: 492)
 
         let item = NSMenuItem()
         item.view = hostingView
@@ -79,12 +80,14 @@ final class StatusItemController: NSObject {
     }
 
     private func statusImage() -> NSImage? {
-        let preferredNames = ["scope", "smallcircle.filled.circle", "target"]
-        for name in preferredNames {
-            if let image = NSImage(systemSymbolName: name, accessibilityDescription: "StillPoint") {
-                return image
-            }
-        }
-        return nil
+        guard let image = NSImage(
+            systemSymbolName: "scope",
+            accessibilityDescription: "StillPoint"
+        ) else { return nil }
+
+        let configuration = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let configuredImage = image.withSymbolConfiguration(configuration) ?? image
+        configuredImage.isTemplate = true
+        return configuredImage
     }
 }

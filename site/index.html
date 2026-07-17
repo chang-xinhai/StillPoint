@@ -88,9 +88,10 @@
                 <span aria-hidden="true">●</span>
                 <span data-en="Download macOS" data-zh="下载 macOS"></span>
               </a>
-              <button class="command-copy" type="button" aria-label="Install from source command">
+              <button class="command-copy" type="button" data-copy-command aria-label="Copy install from source command">
                 <span>$</span>
-                <code>git clone github.com/chang-xinhai/StillPoint</code>
+                <code>git clone https://github.com/chang-xinhai/StillPoint.git</code>
+                <span class="copy-feedback" data-copy-feedback data-en="Copy" data-zh="复制"></span>
               </button>
             </div>
             <ul class="trust-list" aria-label="StillPoint principles">
@@ -106,31 +107,30 @@
               <img src="assets/stillpoint-icon.png" alt="" width="42" height="42">
               <div>
                 <strong>StillPoint</strong>
-                <span data-en="Deep Work · 3s checkpoint" data-zh="深度工作 · 3 秒检查点"></span>
+                <span data-en="Watching · 2m checkpoint" data-zh="监控中 · 2 分钟检查点"></span>
               </div>
             </div>
 
             <div class="panel-rule"></div>
 
             <div class="gate-row">
-              <p data-en="Current gate" data-zh="当前守门"></p>
+              <p data-en="Now" data-zh="当前"></p>
               <strong>Douyin</strong>
               <span>0s / 3s</span>
               <div class="meter" aria-hidden="true"><i></i><b></b></div>
               <small
-                data-en="Deep Work Lock overrides the normal 2m app gate."
-                data-zh="深度工作锁会覆盖普通 2 分钟应用门槛。"
+                data-en="Only the targets you chose are watched."
+                data-zh="只观察你主动选择的目标。"
               ></small>
             </div>
 
-            <div class="tuning-row">
-              <div>
-                <p data-en="Normal gate" data-zh="普通门槛"></p>
-                <strong>Douyin / TikTok</strong>
-              </div>
-              <span>2m</span>
-              <div class="mini-slider" aria-hidden="true"><i></i></div>
-              <small data-en="Still adjustable from the menu bar." data-zh="仍可在菜单栏中滑动调整。"></small>
+            <div class="focus-row">
+              <span class="focus-icon" aria-hidden="true">◈</span>
+              <span>
+                <strong data-en="Start 25 min Deep Work" data-zh="开始 25 分钟深度工作"></strong>
+                <small data-en="A firm three-second checkpoint" data-zh="使用明确的三秒检查点"></small>
+              </span>
+              <i aria-hidden="true">›</i>
             </div>
 
             <div class="panel-rule"></div>
@@ -153,26 +153,26 @@
             <div class="panel-rule"></div>
 
             <div class="menu-actions" aria-label="StillPoint actions">
-              <button type="button">
+              <div class="menu-command">
                 <span class="action-icon">□</span>
                 <span data-en="Open Control Center" data-zh="打开控制中心"></span>
                 <em>⌘ O</em>
-              </button>
-              <button type="button">
-                <span class="action-icon">◈</span>
-                <span data-en="Start 25m Deep Work" data-zh="开始 25 分钟深度工作"></span>
-                <em></em>
-              </button>
-              <button type="button">
+              </div>
+              <div class="menu-command">
                 <span class="action-icon">Ⅱ</span>
                 <span data-en="Pause watching" data-zh="暂停监控"></span>
-                <em>⌘ P</em>
-              </button>
-              <button type="button">
+                <em></em>
+              </div>
+              <div class="menu-command">
+                <span class="action-icon">▷</span>
+                <span data-en="Preview checkpoint" data-zh="预览检查点"></span>
+                <em></em>
+              </div>
+              <div class="menu-command">
                 <span class="action-icon">×</span>
                 <span data-en="Quit StillPoint" data-zh="退出 StillPoint"></span>
                 <em>⌘ Q</em>
-              </button>
+              </div>
             </div>
           </div>
         </div>
@@ -253,6 +253,8 @@
     <script>
       (() => {
         const button = document.querySelector("[data-language-toggle]");
+        const copyButton = document.querySelector("[data-copy-command]");
+        const copyFeedback = document.querySelector("[data-copy-feedback]");
         const nodes = Array.from(document.querySelectorAll("[data-en][data-zh]"));
         const stored = localStorage.getItem("stillpoint-language");
         let language = stored === "zh" || stored === "en" ? stored : "en";
@@ -271,6 +273,21 @@
           language = language === "zh" ? "en" : "zh";
           localStorage.setItem("stillpoint-language", language);
           applyLanguage();
+        });
+
+        copyButton.addEventListener("click", async () => {
+          const command = copyButton.querySelector("code").textContent;
+          try {
+            await navigator.clipboard.writeText(command);
+            copyFeedback.textContent = language === "zh" ? "已复制" : "Copied";
+            copyButton.dataset.copied = "true";
+            window.setTimeout(() => {
+              delete copyButton.dataset.copied;
+              applyLanguage();
+            }, 1600);
+          } catch {
+            copyFeedback.textContent = language === "zh" ? "请手动复制" : "Select to copy";
+          }
         });
 
         applyLanguage();

@@ -4,99 +4,142 @@ struct InterventionOverlayView: View {
     var context: InterventionContext
     var onAction: (InterventionAction) -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @State private var appeared = false
+
     var body: some View {
         ZStack {
-            Color.black.opacity(0.72)
+            Color.black.opacity(0.56)
                 .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                VStack(spacing: 22) {
-                    HStack {
-                        StatusPill(
-                            text: context.isFocusLock
-                                ? context.language.text("Deep Work Lock", "专注锁")
-                                : context.language.text("App gate reached", "应用阈值已到"),
-                            systemImage: context.isFocusLock ? "lock.shield" : "pause.circle",
-                            tint: context.isFocusLock ? .orange : .blue
-                        )
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .opacity(reduceTransparency ? 0 : 0.32)
+                .ignoresSafeArea()
+
+            VStack(alignment: .leading, spacing: 24) {
+                HStack {
+                    StatusPill(
+                        text: context.isFocusLock
+                            ? context.language.text("Deep Work checkpoint", "专注锁检查点")
+                            : context.language.text("A moment to choose", "停一下，再选择"),
+                        systemImage: context.isFocusLock ? "lock.shield" : "pause.fill",
+                        tint: context.isFocusLock ? StillPointPalette.warm : StillPointPalette.accent
+                    )
+
+                    Spacer()
+
+                    Text(context.elapsedSeconds.shortDurationString)
+                        .font(.callout.monospacedDigit().weight(.medium))
+                        .foregroundStyle(.secondary)
+                }
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(context.language.text(
+                        "Is this still what you came for?",
+                        "你还在做刚才想做的事吗？"
+                    ))
+                    .font(.system(size: 32, weight: .semibold))
+                    .tracking(-0.7)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                    Text(context.language.text(
+                        "You’ve been in (context.appName) long enough for the visit to become automatic. Nothing is wrong — choose what happens next.",
+                        "你已经在 (context.appName) 停留了一段时间，最初的访问可能正在变成无意识滑动。没关系，重新选择下一步。"
+                    ))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Button {
+                    onAction(.closeApp)
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "arrow.uturn.backward")
+                            .font(.headline)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(context.language.text("Return to what I was doing", "回到刚才在做的事"))
+                                .font(.headline)
+                            Text(context.language.text("Close this feed", "关闭这个信息流"))
+                                .font(.caption)
+                                .opacity(0.78)
+                        }
                         Spacer()
-                        Text(context.elapsedSeconds.shortDurationString)
-                            .font(.callout.monospacedDigit().weight(.semibold))
-                            .foregroundStyle(.secondary)
+                        Image(systemName: "return")
+                            .foregroundStyle(.white.opacity(0.68))
                     }
-
-                    VStack(spacing: 9) {
-                        Text("StillPoint")
-                            .font(.system(size: 38, weight: .semibold))
-                        Text(context.language.text("Are you still here for the reason you came?", "你还在为刚才进来的理由而停留吗？"))
-                            .font(.title2.weight(.semibold))
-                            .multilineTextAlignment(.center)
-                        Text(context.language.text(
-                            "\(context.appName) has held focus long enough to check intent.",
-                            "\(context.appName) 已经停留到需要确认意图的时间。"
-                        ))
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .frame(maxWidth: 560)
-
-                    QuietDivider()
-
-                    VStack(spacing: 10) {
-                        HStack(spacing: 10) {
-                            OverlayChoiceButton(
-                                title: context.language.text("Looking something up", "我在查东西"),
-                                detail: context.language.text("Purpose pass", "查找通行"),
-                                systemImage: "magnifyingglass",
-                                tint: .blue
-                            ) {
-                                onAction(.purposePass)
-                            }
-
-                            OverlayChoiceButton(
-                                title: context.language.text("Intentional break", "有意休息"),
-                                detail: context.language.text("Bounded pause", "有边界的暂停"),
-                                systemImage: "cup.and.saucer",
-                                tint: .purple
-                            ) {
-                                onAction(.intentionalBreak)
-                            }
-                        }
-
-                        HStack(spacing: 10) {
-                            OverlayChoiceButton(
-                                title: context.language.text("I drifted", "我走神了"),
-                                detail: context.language.text("Close the feed", "关闭信息流"),
-                                systemImage: "xmark.circle",
-                                tint: .red
-                            ) {
-                                onAction(.closeApp)
-                            }
-
-                            OverlayChoiceButton(
-                                title: context.language.text("Lock this", "锁住这次"),
-                                detail: context.language.text("Protect focus", "保护专注"),
-                                systemImage: "lock.shield",
-                                tint: .orange
-                            ) {
-                                onAction(.startLock)
-                            }
-                        }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, minHeight: 62)
+                    .background(StillPointPalette.accent.gradient, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .strokeBorder(.white.opacity(0.20), lineWidth: 1)
                     }
                 }
-                .padding(26)
+                .buttonStyle(PressableButtonStyle())
+                .keyboardShortcut(.defaultAction)
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(context.language.text("Or continue deliberately", "或者，有意识地继续"))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+
+                    HStack(spacing: 10) {
+                        OverlayChoiceButton(
+                            title: context.language.text("Look something up", "查完一件事"),
+                            detail: context.language.text("Brief purpose pass", "短时查找通行"),
+                            systemImage: "magnifyingglass"
+                        ) {
+                            onAction(.purposePass)
+                        }
+
+                        OverlayChoiceButton(
+                            title: context.language.text("Take an intentional break", "有意休息一下"),
+                            detail: context.language.text("A bounded pause", "有边界的暂停"),
+                            systemImage: "cup.and.saucer"
+                        ) {
+                            onAction(.intentionalBreak)
+                        }
+                    }
+
+                    Button {
+                        onAction(.startLock)
+                    } label: {
+                        Label(
+                            context.language.text("Start Deep Work Lock after closing", "关闭后开启专注锁"),
+                            systemImage: "lock.shield"
+                        )
+                        .font(.callout.weight(.medium))
+                        .foregroundStyle(context.isFocusLock ? .secondary : StillPointPalette.warm)
+                        .frame(maxWidth: .infinity, minHeight: 34)
+                    }
+                    .buttonStyle(PressableButtonStyle())
+                    .disabled(context.isFocusLock)
+                }
             }
-            .frame(width: 700)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .padding(28)
+            .frame(width: 650)
+            .background {
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(reduceTransparency ? AnyShapeStyle(Color(nsColor: .windowBackgroundColor)) : AnyShapeStyle(.ultraThickMaterial))
+            }
             .overlay {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(.white.opacity(0.14), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .strokeBorder(.white.opacity(0.16), lineWidth: 1)
             }
-            .shadow(color: .black.opacity(0.34), radius: 30, x: 0, y: 18)
+            .shadow(color: .black.opacity(0.32), radius: 42, x: 0, y: 24)
+            .scaleEffect(appeared || reduceMotion ? 1 : 0.965)
+            .opacity(appeared ? 1 : 0)
             .padding(40)
         }
-        .preferredColorScheme(.dark)
+        .onAppear {
+            withAnimation(reduceMotion ? .easeOut(duration: 0.18) : .spring(response: 0.38, dampingFraction: 0.90)) {
+                appeared = true
+            }
+        }
     }
 }
 
@@ -104,32 +147,35 @@ private struct OverlayChoiceButton: View {
     var title: String
     var detail: String
     var systemImage: String
-    var tint: Color
     var action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 11) {
-                IconRoundel(systemImage: systemImage, tint: tint)
+                Image(systemName: systemImage)
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(StillPointPalette.accent)
+                    .frame(width: 30, height: 30)
+                    .background(StillPointPalette.accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                        .font(.headline)
+                        .font(.callout.weight(.semibold))
                     Text(detail)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
-                Spacer()
+                Spacer(minLength: 4)
             }
-            .padding(13)
-            .frame(maxWidth: .infinity, minHeight: 72)
-            .background(.primary.opacity(0.055), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .padding(12)
+            .frame(maxWidth: .infinity, minHeight: 66)
+            .background(.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(.primary.opacity(0.08), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .strokeBorder(.primary.opacity(0.075), lineWidth: 1)
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
     }
 }

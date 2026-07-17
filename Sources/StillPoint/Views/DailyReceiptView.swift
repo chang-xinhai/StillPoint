@@ -7,76 +7,118 @@ struct DailyReceiptView: View {
         let summary = model.dailySummary
 
         ScrollView {
-            VStack(alignment: .leading, spacing: 22) {
+            VStack(alignment: .leading, spacing: 24) {
                 WorkspaceHeader(
                     eyebrow: model.t("Today", "今天"),
-                    title: model.t("Daily Attention Receipt", "每日注意力小票"),
+                    title: model.t("A receipt, not a score.", "一张小票，不是成绩单。"),
                     subtitle: model.t(
-                        "A single low-pressure review, never a per-exit interruption.",
-                        "每天一次轻量回顾，而不是每次退出都打扰你。"
+                        "One calm review of the moments when you chose what happened next.",
+                        "只回顾那些你重新选择下一步的片刻。"
                     )
                 )
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), spacing: 12)], spacing: 12) {
-                    SummaryTile(
-                        title: model.t("Checks", "检查"),
-                        value: "\(summary.driftChecks)",
-                        caption: model.t("Intent moments", "意图检查"),
-                        systemImage: "figure.mind.and.body",
-                        tint: .cyan
-                    )
-                    SummaryTile(
-                        title: model.t("Closed", "关闭"),
-                        value: "\(summary.closedDrifts)",
-                        caption: model.t("Feeds left", "离开的信息流"),
-                        systemImage: "xmark.circle",
-                        tint: .red
-                    )
-                    SummaryTile(
-                        title: model.t("Protected", "保护"),
-                        value: summary.protectedSeconds.shortDurationString,
-                        caption: model.t("Estimated return", "估算找回"),
-                        systemImage: "shield",
-                        tint: .green
-                    )
-                }
+                SurfaceCard {
+                    VStack(alignment: .leading, spacing: 22) {
+                        HStack(alignment: .firstTextBaseline) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(Date.now, format: .dateTime.weekday(.wide).month(.wide).day())
+                                    .font(.headline)
+                                Text(model.t("Attention receipt", "注意力小票"))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
 
-                PlainPanel {
-                    VStack(alignment: .leading, spacing: 14) {
-                        SectionKicker(model.t("Timeline", "时间线"), systemImage: "clock")
+                            Spacer()
 
-                        if summary.hasData {
-                            VStack(spacing: 0) {
-                                ForEach(model.todayEvents.reversed()) { event in
-                                    ReceiptEventRow(event: event, language: model.language)
-                                    if event.id != model.todayEvents.first?.id {
-                                        HairlineDivider()
+                            Image(systemName: "leaf.fill")
+                                .foregroundStyle(StillPointPalette.accent)
+                                .accessibilityHidden(true)
+                        }
+
+                        HairlineDivider()
+
+                        HStack(spacing: 0) {
+                            ReceiptMetric(
+                                title: model.t("Checkpoints", "检查点"),
+                                value: "\(summary.driftChecks)"
+                            )
+                            ReceiptMetric(
+                                title: model.t("Feeds closed", "离开信息流"),
+                                value: "\(summary.closedDrifts)"
+                            )
+                            ReceiptMetric(
+                                title: model.t("Protected", "已保护"),
+                                value: summary.protectedSeconds.shortDurationString
+                            )
+                        }
+
+                        HairlineDivider()
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            SectionKicker(model.t("Moments", "片刻"), systemImage: "clock")
+
+                            if summary.hasData {
+                                VStack(spacing: 0) {
+                                    ForEach(model.todayEvents.reversed()) { event in
+                                        ReceiptEventRow(event: event, language: model.language)
+                                        if event.id != model.todayEvents.first?.id {
+                                            HairlineDivider()
+                                                .padding(.leading, 34)
+                                        }
                                     }
                                 }
-                            }
-                        } else {
-                            HStack(spacing: 12) {
-                                IconRoundel(systemImage: "text.page", tint: .secondary)
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text(model.t("No receipt yet", "还没有小票"))
-                                        .font(.headline)
-                                    Text(model.t(
-                                        "Simulate once or use a watched target long enough to create the first check.",
-                                        "模拟一次，或使用被监控目标足够久，以生成第一次检查。"
-                                    ))
+                            } else {
+                                HStack(spacing: 12) {
+                                    IconRoundel(systemImage: "checkmark", tint: StillPointPalette.accent)
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(model.t("Nothing to review yet", "暂时无需回顾"))
+                                            .font(.headline)
+                                        Text(model.t(
+                                            "StillPoint will add a line only when it asks you to pause.",
+                                            "只有在 StillPoint 请你暂停时，这里才会新增一行。"
+                                        ))
                                         .font(.callout)
                                         .foregroundStyle(.secondary)
+                                    }
                                 }
+                                .padding(.vertical, 10)
                             }
-                            .padding(.vertical, 8)
                         }
+
+                        HairlineDivider()
+
+                        Text(model.t(
+                            "Your data stays on this Mac. Tomorrow begins with a clean page.",
+                            "数据只保留在这台 Mac 上。明天会从新的一页开始。"
+                        ))
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
                     }
                 }
             }
-            .frame(maxWidth: 860, alignment: .leading)
-            .padding(.horizontal, 32)
-            .padding(.vertical, 28)
+            .frame(maxWidth: 820, alignment: .leading)
+            .padding(.horizontal, 34)
+            .padding(.top, 30)
+            .padding(.bottom, 42)
         }
+    }
+}
+
+private struct ReceiptMetric: View {
+    var title: String
+    var value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(value)
+                .font(.system(size: 28, weight: .semibold, design: .rounded).monospacedDigit())
+                .tracking(-0.45)
+                .contentTransition(.numericText())
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -91,10 +133,10 @@ private struct ReceiptEventRow: View {
                 .foregroundStyle(tint)
                 .frame(width: 22)
             VStack(alignment: .leading, spacing: 3) {
-                Text(event.appName)
-                    .font(.headline)
                 Text(event.action.title(language: language))
-                    .font(.callout)
+                    .font(.callout.weight(.medium))
+                Text(event.appName)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -109,17 +151,16 @@ private struct ReceiptEventRow: View {
         switch event.action {
         case .purposePass: "magnifyingglass"
         case .intentionalBreak: "cup.and.saucer"
-        case .closeApp: "xmark.circle"
+        case .closeApp: "arrow.uturn.backward"
         case .startLock: "lock.shield"
         }
     }
 
     private var tint: Color {
         switch event.action {
-        case .purposePass: .blue
-        case .intentionalBreak: .purple
-        case .closeApp: .red
-        case .startLock: .orange
+        case .purposePass, .intentionalBreak: StillPointPalette.accent
+        case .closeApp: StillPointPalette.danger
+        case .startLock: StillPointPalette.warm
         }
     }
 }

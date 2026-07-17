@@ -2,16 +2,17 @@ import SwiftUI
 
 struct DashboardView: View {
     @ObservedObject var model: AppModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 22) {
+            VStack(alignment: .leading, spacing: 24) {
                 WorkspaceHeader(
-                    eyebrow: model.t("Live monitor", "实时监控"),
-                    title: model.t("Attention Control Center", "注意力控制中心"),
+                    eyebrow: model.t("Live attention", "实时注意力"),
+                    title: model.t("A quiet place to notice.", "安静地，注意到。"),
                     subtitle: model.t(
-                        "A menu bar guardian that waits quietly until a feed starts pulling.",
-                        "一个安静待在菜单栏里的守门人，只在信息流开始拉走你时出现。"
+                        "StillPoint stays out of the way until a chosen feed starts becoming automatic.",
+                        "StillPoint 平时不打扰，只在你选择的信息流开始变成无意识滑动时出现。"
                     )
                 ) {
                     StatusCluster(model: model)
@@ -19,36 +20,19 @@ struct DashboardView: View {
 
                 IntentCheckpointPanel(model: model)
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), spacing: 12)], spacing: 12) {
-                    SummaryTile(
-                        title: model.t("Checks", "检查"),
-                        value: "\(model.dailySummary.driftChecks)",
-                        caption: model.t("Intent moments today", "今天的意图检查"),
-                        systemImage: "figure.mind.and.body",
-                        tint: .cyan
-                    )
-                    SummaryTile(
-                        title: model.t("Protected", "保护"),
-                        value: model.dailySummary.protectedSeconds.shortDurationString,
-                        caption: model.t("Estimated time returned", "估算找回时间"),
-                        systemImage: "shield",
-                        tint: .green
-                    )
-                    SummaryTile(
-                        title: model.t("Targets", "目标"),
-                        value: "\(model.enabledWatchCount)",
-                        caption: model.t("Explicitly watched apps", "明确监控的应用"),
-                        systemImage: "eye",
-                        tint: .orange
-                    )
-                }
+                TodaySummaryStrip(model: model)
 
                 RecentActivityPanel(model: model)
             }
-            .frame(maxWidth: 860, alignment: .leading)
-            .padding(.horizontal, 32)
-            .padding(.vertical, 28)
+            .frame(maxWidth: 900, alignment: .leading)
+            .padding(.horizontal, 34)
+            .padding(.top, 30)
+            .padding(.bottom, 42)
         }
+        .animation(
+            reduceMotion ? nil : .spring(response: 0.40, dampingFraction: 1),
+            value: model.focusLockActive
+        )
     }
 }
 
@@ -56,17 +40,22 @@ private struct StatusCluster: View {
     @ObservedObject var model: AppModel
 
     var body: some View {
-        HStack(spacing: 8) {
+        VStack(alignment: .trailing, spacing: 7) {
             StatusPill(
                 text: model.watchStateLabel,
                 systemImage: model.monitoringEnabled ? "eye" : "eye.slash",
-                tint: model.monitoringEnabled ? .green : .secondary
+                tint: model.monitoringEnabled ? StillPointPalette.accent : .secondary
             )
-            StatusPill(
-                text: model.modeLabel,
-                systemImage: model.focusLockActive ? "lock.shield" : "bolt",
-                tint: model.focusLockActive ? .orange : .cyan
-            )
+
+            if model.focusLockActive {
+                Label(
+                    model.t("Locked for (model.focusLockRemaining.shortDurationString)", "专注锁剩余 (model.focusLockRemaining.shortDurationString)"),
+                    systemImage: "lock.fill"
+                )
+                .font(.caption.monospacedDigit().weight(.medium))
+                .foregroundStyle(StillPointPalette.warm)
+                .contentTransition(.numericText())
+            }
         }
     }
 }
@@ -74,63 +63,160 @@ private struct StatusCluster: View {
 private struct IntentCheckpointPanel: View {
     @ObservedObject var model: AppModel
 
+    private var gateTint: Color {
+        model.focusLockActive ? StillPointPalette.warm : StillPointPalette.accent
+    }
+
+    private var activeDisplayName: String {
+        model.activeBundleIdentifier.isEmpty
+            ? model.t("No watched target", "暂无监控目标")
+            : model.activeAppName
+    }
+
     var body: some View {
-        PlainPanel(minHeight: 214) {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack(alignment: .top, spacing: 14) {
-                    IconRoundel(systemImage: model.focusLockActive ? "lock.shield.fill" : "scope", tint: model.focusLockActive ? .orange : .cyan)
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(model.t("Current gate", "当前阈值"))
+        SurfaceCard(minHeight: 270) {
+            VStack(alignment: .leading, spacing: 22) {
+                HStack(alignment: .center, spacing: 12) {
+                    IconRoundel(
+                        systemImage: model.focusLockActive ? "lock.shield.fill" : "scope",
+                        tint: gateTint
+                    )
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(model.t("Current checkpoint", "当前检查点"))
                             .font(.headline)
-                        Text(model.t(
-                            "StillPoint watches the frontmost app, then asks for intent before a feed becomes autopilot.",
-                            "StillPoint 会观察最前台应用，并在信息流进入自动驾驶前询问你的意图。"
-                        ))
+                        Text(model.focusLockActive
+                             ? model.t("Deep Work uses a firm three-second pause.", "专注锁使用明确的三秒暂停。")
+                             : model.t("Watching only the targets you chose.", "只观察你主动选择的目标。"))
                             .font(.callout)
                             .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
+
                     Spacer()
+
+                    Text(model.modeLabel)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(gateTint)
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(model.activeAppName)
-                            .font(.system(size: 34, weight: .semibold, design: .rounded))
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .firstTextBaseline, spacing: 18) {
+                        Text(activeDisplayName)
+                            .font(.system(size: 38, weight: .semibold, design: .rounded))
+                            .tracking(-0.8)
                             .lineLimit(1)
-                            .minimumScaleFactor(0.62)
+                            .minimumScaleFactor(0.65)
+
                         Spacer()
-                        Text("\(model.activeElapsed.shortDurationString) / \(model.visibleTriggerThreshold.shortDurationString)")
-                            .font(.callout.monospacedDigit().weight(.semibold))
+
+                        Text(model.activeElapsed.shortDurationString)
+                            .font(.system(size: 20, weight: .semibold, design: .rounded).monospacedDigit())
                             .foregroundStyle(.secondary)
+                            .contentTransition(.numericText())
                     }
 
-                    ProgressLine(value: model.activeProgress, tint: model.focusLockActive ? .orange : .cyan, marker: 0.86)
-                }
+                    ProgressLine(value: model.activeProgress, tint: gateTint, marker: 0.86)
 
-                Text(model.activeBundleIdentifier.isEmpty ? model.statusMessage : model.activeBundleIdentifier)
-                    .font(.callout)
+                    HStack {
+                        Text(model.activeBundleIdentifier.isEmpty
+                             ? model.t("Waiting for a chosen feed", "等待已选信息流")
+                             : model.activeBundleIdentifier)
+                            .lineLimit(1)
+                        Spacer()
+                        Text("\(model.t("pause at", "暂停于")) \(model.visibleTriggerThreshold.shortDurationString)")
+                            .monospacedDigit()
+                    }
+                    .font(.caption)
                     .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                }
 
                 HStack(spacing: 10) {
                     Button {
                         model.simulateDouyinDrift()
                     } label: {
-                        Label(model.t("Simulate drift", "模拟走神"), systemImage: "play.fill")
+                        Label(model.t("Preview checkpoint", "预览检查点"), systemImage: "play.fill")
                     }
                     .buttonStyle(.borderedProminent)
+                    .tint(StillPointPalette.accent)
+                    .keyboardShortcut(.space, modifiers: [.command])
 
                     Button {
-                        model.startFocusLock(minutes: 25)
+                        if model.focusLockActive {
+                            model.stopFocusLock()
+                        } else {
+                            model.startFocusLock(minutes: 25)
+                        }
                     } label: {
-                        Label(model.focusLockActive ? model.t("Extend lock", "延长锁定") : model.t("Start work lock", "开启专注锁"), systemImage: "lock.shield")
+                        Label(
+                            model.focusLockActive ? model.t("End Deep Work", "结束专注锁") : model.t("Start 25 min Deep Work", "开始 25 分钟专注"),
+                            systemImage: model.focusLockActive ? "lock.open" : "lock.shield"
+                        )
                     }
 
                     Spacer()
                 }
             }
         }
+    }
+}
+
+private struct TodaySummaryStrip: View {
+    @ObservedObject var model: AppModel
+
+    var body: some View {
+        PlainPanel {
+            HStack(spacing: 0) {
+                SummaryItem(
+                    title: model.t("Checkpoints", "检查点"),
+                    value: "\(model.dailySummary.driftChecks)",
+                    detail: model.t("today", "今天")
+                )
+                SummaryDivider()
+                SummaryItem(
+                    title: model.t("Returned", "已返回"),
+                    value: "\(model.dailySummary.closedDrifts)",
+                    detail: model.t("feeds closed", "次离开信息流")
+                )
+                SummaryDivider()
+                SummaryItem(
+                    title: model.t("Protected", "已保护"),
+                    value: model.dailySummary.protectedSeconds.shortDurationString,
+                    detail: model.t("estimated", "估算时间")
+                )
+            }
+        }
+    }
+}
+
+private struct SummaryItem: View {
+    var title: String
+    var value: String
+    var detail: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(title)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.system(size: 24, weight: .semibold, design: .rounded).monospacedDigit())
+                .tracking(-0.35)
+                .contentTransition(.numericText())
+            Text(detail)
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 8)
+    }
+}
+
+private struct SummaryDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(.primary.opacity(0.075))
+            .frame(width: 1, height: 58)
+            .padding(.horizontal, 14)
     }
 }
 
@@ -140,35 +226,48 @@ private struct RecentActivityPanel: View {
     var body: some View {
         let recent = Array(model.todayEvents.suffix(4).reversed())
 
-        PlainPanel {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    SectionKicker(model.t("Today", "今天"), systemImage: "text.page")
-                    Spacer()
-                    Text(model.todayEvents.isEmpty ? model.t("No receipt yet", "还没有小票") : model.t("\(model.todayEvents.count) events", "\(model.todayEvents.count) 条记录"))
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                }
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                SectionKicker(model.t("Today’s receipt", "今天的小票"), systemImage: "text.page")
+                Spacer()
+                Text(model.todayEvents.isEmpty
+                     ? model.t("Nothing to review", "暂无内容")
+                     : model.t("\(model.todayEvents.count) moments", "\(model.todayEvents.count) 个片刻"))
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
 
-                if model.todayEvents.isEmpty {
+            if model.todayEvents.isEmpty {
+                HStack(spacing: 12) {
+                    Image(systemName: "leaf")
+                        .font(.title3)
+                        .foregroundStyle(StillPointPalette.accent)
+                        .frame(width: 36, height: 36)
+                        .background(StillPointPalette.accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
                     Text(model.t(
-                        "Simulate once or keep a watched feed open long enough to create the first checkpoint.",
-                        "模拟一次，或让被监控的信息流停留足够久，以生成第一次检查。"
+                        "A quiet day so far. Your first checkpoint will appear here.",
+                        "今天目前很安静。第一次检查会出现在这里。"
                     ))
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                } else {
-                    VStack(spacing: 0) {
-                        ForEach(recent) { event in
-                            DataRow(event.action.title(language: model.language), value: event.date.shortTimeString, caption: event.appName)
-                            if event.id != recent.last?.id {
-                                HairlineDivider()
-                            }
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 8)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(recent) { event in
+                        DataRow(
+                            event.action.title(language: model.language),
+                            value: event.date.shortTimeString,
+                            caption: event.appName
+                        )
+                        if event.id != recent.last?.id {
+                            HairlineDivider()
                         }
                     }
                 }
             }
         }
+        .padding(.horizontal, 2)
     }
 }
